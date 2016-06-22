@@ -1,0 +1,16 @@
+{
+    "contents" : "Package: MODA\nType: Package\nTitle: MODA: MOdule Differential Analysis for weighted gene\n        co-expression network\nVersion: 0.99.4\nDate: 2016-06-22\nAuthor: Dong Li, James B. Brown, Luisa Orsini, Zhisong Pan, Guyu Hu and Shan He\nMaintainer: Dong Li <dxl466@cs.bham.ac.uk>\nDescription: MODA can be used to estimate and construct condition-specific gene\n    co-expression networks, and identify differentially expressed subnetworks as\n    conserved or condition specific modules which are potentially associated with\n    relevant biological processes.\nLicense: GPL (>= 2)\nDepends: R (>= 3.1.0)\nImports: WGCNA,dynamicTreeCut,igraph\nRoxygenNote: 5.0.1\nbiocViews: GeneExpression, Microarray, DifferentialExpression, Network\nSuggests: BiocStyle\n",
+    "created" : 1464087263263.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1525053998",
+    "id" : "9FEDB910",
+    "lastKnownWriteTime" : 1466613857,
+    "path" : "D:/Code/MODA/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "dcf"
+}
