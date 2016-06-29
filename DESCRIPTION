@@ -2,8 +2,8 @@ Package: MODA
 Type: Package
 Title: MODA: MOdule Differential Analysis for weighted gene
         co-expression network
-Version: 0.99.4
-Date: 2016-06-22
+Version: 0.99.5
+Date: 2016-06-29
 Author: Dong Li, James B. Brown, Luisa Orsini, Zhisong Pan, Guyu Hu and Shan He
 Maintainer: Dong Li <dxl466@cs.bham.ac.uk>
 Description: MODA can be used to estimate and construct condition-specific gene
