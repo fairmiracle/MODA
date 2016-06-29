@@ -7,11 +7,18 @@ School of Computer Science, The University of Birmingham, UK
 }
 \date{Date modified: \Sexpr{Sys.Date()}}
 %\VignetteIndexEntry{Usage of MODA}
-<<style-Sweave, eval=TRUE, echo=FALSE, results=tex>>=
+<<style-Sweave, eval=TRUE, echo=FALSE, results='asis'>>=
 BiocStyle::latex()
 @
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(
+concordance=TRUE
+)
+@
+
 \maketitle
 
 In this example we embed parts of the examples from the
@@ -39,7 +46,7 @@ intModules2 <- WeightedModulePartitionDensity(datExpr2,ResultFolder,
 which shows how to detect modules using hierecal clustering with the optimal cutting height of dendrogram. The heatmap of correlation matrix of gene expression profile 1 may looks like Figure \ref{fig:heat1}. Another package \cite{link} has the similar function.
 \begin{figure}
 \centering
-<<fig=TRUE,echo=FALSE>>=
+<<echo=FALSE,out.width='0.6\\textwidth'>>=
 heatmap(cor(as.matrix(datExpr1)))
 @
 \caption{Correlation matrix of gene expression profile 1.}
@@ -49,7 +56,7 @@ heatmap(cor(as.matrix(datExpr1)))
 The selection of optimal cutting height for each expression profile would be stored under directory $ResultFolder$. Take $datExpr1$ in the synthetic data for example, a file named $Partitions\_X.pdf$ may looks like Figure \ref{fig:cut1}.
 \begin{figure}
 \centering
-\includegraphics{ForSynthetic/Partitions_X.pdf}
+\includegraphics[width=10cm]{ForSynthetic/Partitions_X.pdf}
 \caption{Maximal partition density based hierarchical clustering for gene expression profile 1.}
 \label{fig:cut1}
 \end{figure}
@@ -66,7 +73,7 @@ CompareAllNets(ResultFolder,intModules1,indicator1,intModules2,
 The condition specific networks can be specified by two vectors if there are more. There are three files under the secondary directory named by condition name: two text files of them are condition specific and conserved modules id from background network, and one pdf for showing how to determine these modules by two parameters $specificTheta$ and $conservedTheta$ based on a Jaccard index matrix. Theoretical details can be found in supplementary file of MODA paper. The figure may looks like Figure \ref{fig:compare}.
 \begin{figure}
 \centering
-\includegraphics{ForSynthetic/Y/module_overlap_removeY.pdf}
+\includegraphics[width=10cm]{ForSynthetic/Y/module_overlap_removeY.pdf}
 \caption{Overlap degree of modules from two networks.}
 \label{fig:compare}
 \end{figure}
@@ -74,7 +81,7 @@ The condition specific networks can be specified by two vectors if there are mor
 \section{Biological explanation}
 Finally we can do gene annotation enrichment analysis with intergative tools like DAVID\footnote{https://david.ncifcrf.gov} or Enrichr\footnote{http://amp.pharm.mssm.edu/Enrichr}, to see whether a module gene list can be explained by existing biological process, pathways or even diseases.
 \section{Session info}
-<<sessionInfo, results=tex, echo=FALSE>>=
+<<sessionInfo, results='asis', echo=FALSE>>=
 toLatex(sessionInfo())
 @
  \begin{thebibliography}{1}
