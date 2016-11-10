@@ -74,6 +74,8 @@ PartitionDensity <- function(ADJ, PartitionSet){
 PartitionModularity <- function(ADJ, PartitionSet){
     labels <- unique(PartitionSet)
     numP <- length(labels)
+    m = sum(ADJ)
+    K = colSums(ADJ)
     pModularity <- 0
     for (i in seq_len(numP)){
         idx = which(PartitionSet == labels[i])
@@ -82,15 +84,15 @@ PartitionModularity <- function(ADJ, PartitionSet){
             pModularity <- pModularity + 0
         }else{
             Aq = ADJ[idx,idx]
-            sum = sum(Aq)
-            nrow = dim(Aq)[1]
-            pModularity <- pModularity + sum * (sum - nrow) / (nrow * (nrow - 1))
+            deg = K[idx]
+            pModularity = pModularity + sum(Aq)- sum(deg*deg)/m
+            
         }
-        
     }
-    pModularity <- pModularity*2/sum(ADJ)
+    pModularity <- pModularity/m
     pModularity
 }
+
 
 #' Illustration of Modules detection
 #' 
@@ -148,7 +150,7 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
     for (i in 1:NumCutHeights) {
         #groups <- cutree(hierADJ, h = hierADJ$height[i]) # cut tree into 5
         groups <- cutree(hierADJ, h = cutHeights[i])
-        if (cutmethod == 'density'){
+        if (cutmethod == 'Density'){
             pDensity[i] <- PartitionDensity(ADJ1,groups)
         }else{
             pDensity[i] <- PartitionModularity(ADJ1,groups)
