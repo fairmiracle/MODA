@@ -8,7 +8,8 @@ export(comparemodulestwonets)
 import(WGCNA)
 import(igraph)
 importFrom(dynamicTreeCut,cutreeDynamic)
-importFrom("grDevices", "dev.off", "pdf")
+
+importFrom("grDevices", "dev.off", "png")
 importFrom("graphics", "abline", "axis", "layout", "lines", "par",
              "plot", "text", "title")
 importFrom("stats", "as.dist", "cutree", "hclust")

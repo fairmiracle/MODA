@@ -173,8 +173,9 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
     intModules = table(dynamicColors)
      
     #######Visualization#############
-    pdf(paste(foldername,"/Partitions_",indicatename,".pdf",sep=""),width = 11, 
-        height = 8)
+    #pdf(paste(foldername,"/Partitions_",indicatename,".pdf",sep=""),width = 11, 
+    #    height = 8)
+    png(paste(foldername,"/Partitions_",indicatename,".png",sep=""))
     marAll = c(1, 5, 3, 1)
     layout(matrix(c(1,2,3,0), 2, 2, byrow = TRUE), widths=c(0.8,0.2),
            heights=c(0.8,0.2))
@@ -310,11 +311,13 @@ CompareAllNets <-function(ResultFolder,intModules,speciesName,
                     intconditionModules[i],paste('/DenseModuleGene_',
                     speciesName,sep=''),paste('/DenseModuleGene_',
                     conditionNames[i],sep=''))
-        dir.create(paste(ResultFolder,'/',conditionNames[i],sep=''))
+        dir.create(paste(ResultFolder,'/',conditionNames[i],sep=''), showWarnings = FALSE)
         fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
 
-        pdf(paste(fileprefix,'module_overlap_remove',conditionNames[i],
-                  '.pdf',sep=''),width = 10, height = 8)
+        #pdf(paste(fileprefix,'module_overlap_remove',conditionNames[i],
+        #          '.pdf',sep=''),width = 10, height = 8)
+        png(paste(fileprefix,'module_overlap_remove',conditionNames[i],
+                  '.png',sep=''))
         plot(1:intModules,rowSums(ArrayGroup1),xlim = c(0,(intModules + 1)),
              ylim = c(0,max(rowSums(ArrayGroup1)) + 0.1),
              xlab="Module ID",ylab = 'RowSums of jaccard matrix', 
