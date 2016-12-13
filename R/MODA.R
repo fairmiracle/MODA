@@ -209,17 +209,15 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
     return (length(intModules))
 }
 
-#' Modules identification by Recursive community detection
+#' Modules identification by recursive community detection
 #' 
 #' Modules detection using igraph's community detection algorithms, when the
-#' resulted module is larger than expected, it is further devided 
+#' resulted module is larger than expected, it is further devided by the same program
 #'
 #' @param g igraph object, the network to be partitioned
 #' @param savefile plain text, used to store module, each line as a module
 #' @param method specify the community detection algorithm
 #'
-#' @return The number of clusters
-#' 
 #' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
 #' large networks." Journal of statistical mechanics: theory and experiment 
 #' 2008.10 (2008): P10008.
@@ -239,7 +237,6 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
     msize <- sizes(fc)
     
     if(length(msize) > 1){
-        
         
         for (i in 1:length(msize)) {
             if(msize[i] < 100 & msize[i] >= 3){
@@ -269,7 +266,7 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
     }
 }
 
-#' Modules rank
+#' Modules rank from recursive communities detection
 #' 
 #' Assign the module scores by weights, and rank them from highest to lowest
 #'
