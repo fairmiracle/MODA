@@ -305,6 +305,7 @@ modulesRank <- function(W,modulefile,GeneNames){
 #' @param maxsize the maximal nodes allowed in one module
 #' @param minsize the minimal nodes allowed in one module
 #' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^power
+#' @param tao the threshold to cut the adjacency matrix
 #'
 #' @return The number of clusters
 #' 
@@ -331,9 +332,9 @@ modulesRank <- function(W,modulefile,GeneNames){
 #' @export
 #' 
 WeightedModuleLouvain <- function(datExpr,foldername,indicatename,GeneNames,
-                                  maxsize=100, minsize=3, power=10){
+                                  maxsize=100, minsize=3, power=6, tao=0.2){
     ADJ1 <- abs(cor(datExpr,use="p"))^power
-    ADJ[ADJ < 0.2] <- 0
+    ADJ[ADJ < tao] <- 0
     g <- graph_from_adjacency_matrix(ADJ,mode='undirected',weighted=TRUE)
     V(g)$name=1:length(V(g))
     E(g)$weight = net[,3]
