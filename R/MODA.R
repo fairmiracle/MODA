@@ -94,7 +94,7 @@ PartitionModularity <- function(ADJ, PartitionSet){
 }
 
 
-#' Illustration of Modules detection
+#' Modules detection by hierarchical clustering
 #' 
 #' Module detection based on the optimal cutting height of dendrogram, which is 
 #' selected to make the average density or modularity of resulting partition
@@ -209,6 +209,140 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
     return (length(intModules))
 }
 
+#' Modules identification by Recursive community detection
+#' 
+#' Modules detection using igraph's community detection algorithms, when the
+#' resulted module is larger than expected, it is further devided 
+#'
+#' @param g igraph object, the network to be partitioned
+#' @param savefile plain text, used to store module, each line as a module
+#' @param method specify the community detection algorithm
+#'
+#' @return The number of clusters
+#' 
+#' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
+#' large networks." Journal of statistical mechanics: theory and experiment 
+#' 2008.10 (2008): P10008.
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @keywords community detection
+#' 
+#' @import igraph
+recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
+    
+    if (method == "fastgreedy")
+        fc <- cluster_fast_greedy(g)
+    else if (method == "louvain")
+        fc <- cluster_louvain(g)
+    
+    memfc <- membership(fc)
+    msize <- sizes(fc)
+    
+    if(length(msize) > 1){
+        
+        
+        for (i in 1:length(msize)) {
+            if(msize[i] < 100 & msize[i] >= 3){
+                mgeneids <- V(g)$name[which(memfc==i)]
+                #mgeneids <- as.numeric(mgeneids) - 1
+                cp = c()
+                for (k in 1:length(mgeneids)){
+                    cp = paste(cp,mgeneids[k],sep='\t')
+                }
+                write(cp,file = savefile,append = TRUE)
+            } else if (msize[i] > 100) {
+                #large modules, in recursive way
+                ids = which(memfc==i)
+                g2 <- induced.subgraph(graph=g,vids=ids)
+                recursiveigraph(g2,savefile,method)
+            } else {
+                next
+            }
+        }
+    }
+    else{
+        print(paste('Atom! with size',length(V(g)),sep=' '))
+        edges <- get.edgelist(g)
+        write.table(edges,paste(savefile,'Atomsize',length(V(g)),sep='_'),
+                    sep = "\t",row.names = FALSE,col.names = FALSE,
+                    quote = FALSE,append = TRUE)      
+    }
+}
+
+#' Modules rank
+#' 
+#' Assign the module scores by weights, and rank them from highest to lowest
+#'
+#' @param W Edges weights matrix for WGCN
+#' @param modulefile plain text, the same as savefile in \code{\link{recursiveigraph}}
+#' @param GeneNames Gene symbols, sometimes we need them instead of probe ids
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @seealso \code{\link{recursiveigraph}}
+#' 
+#' @import igraph
+
+modulesRank <- function(W,modulefile,GeneNames){
+    
+    rlines=readLines(modulefile)
+    file.remove(modulefile)
+    foldername = gsub(".txt", "", modulefile)
+    #foldername = gsub(".txt", "", modulefile)
+    dir.create(foldername, showWarnings = FALSE)
+    for (i in 1:length(rlines)) {
+        ap=strsplit(rlines[i],'\t')[[1]]
+        ap=ap[2:length(ap)]
+        mscore = sum(W[ap,ap])
+        write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,sep=''),
+                    quote = FALSE, row.names = FALSE, col.names = FALSE)
+    }
+}
+
+#' Modules detection by Louvain algorithm
+#' 
+#' Module detection based on the Louvain algorithm, which tries to maximize 
+#' overall modularity of resulting partition.
+#'
+#' @param datExpr gene expression profile, rows are samples and columns genes
+#' @param foldername where to store the clusters
+#' @param indicatename normally a specific tag of condition
+#' @param maxsize the maximal nodes allowed in one module
+#' @param minsize the minimal nodes allowed in one module
+#' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^power
+#'
+#' @return The number of clusters
+#' 
+#' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
+#' large networks." Journal of statistical mechanics: theory and experiment 
+#' 2008.10 (2008): P10008.
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @keywords cutting dendrogram
+#' 
+#'
+#' @import igraph
+#' @examples
+#' data(synthetic)
+#' ResultFolder = 'ForSynthetic' # where middle files are stored
+#' CuttingCriterion = 'Density' # could be Density or Modularity
+#' indicator1 = 'X'     # indicator for data profile 1
+#' indicator2 = 'Y'      # indicator for data profile 2
+#' specificTheta = 0.1 #threshold to define condition specific modules
+#' conservedTheta = 0.1#threshold to define conserved modules
+#' intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+#' indicator1,CuttingCriterion) 
+
+#' @export
+#' 
+WeightedModuleLouvain <- function(datExpr,foldername,indicatename,GeneNames,
+                                  maxsize=100, minsize=3, power=10){
+    ADJ1 <- abs(cor(datExpr,use="p"))^power
+    ADJ[ADJ < 0.2] <- 0
+    g <- graph_from_adjacency_matrix(ADJ,mode='undirected',weighted=TRUE)
+    V(g)$name=1:length(V(g))
+    E(g)$weight = net[,3]
+    recursiveigraph(g,foldername,'louvain')
+    modulesRank(ADJ,foldername,GeneNames)
+}
 #' Illustration of two networks comparison
 #' 
 #' Compare the background network and a condition-specific network. A Jaccard
