@@ -31,18 +31,19 @@ overall modularity of resulting partition.
 }
 \examples{
 data(synthetic)
-ResultFolder <- 'ForSynthetic' # where middle files are stored
+ResultFile <- 'ForSynthetic' # where middle files are stored
 indicator <- 'X'     # indicator for data profile 1
 GeneNames <- colnames(datExpr1)
-intModules1 <- WeightedModuleDetection(datExpr1,ResultFolder,indicator,GeneNames)
+intModules1 <- WeightedModuleDetection(datExpr1,ResultFile,indicator,GeneNames)
 truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
 mymodule <- rep(0,500)
-assigntable <- readLines('ForSynthetic')
+assigntable <- readLines(ResultFile)
 for (i in 1:length(assigntable)){
 ap=strsplit(assigntable[i],'\\t')[[1]]
 ap=as.numeric(ap[2:length(ap)])
 mymodule[ap] <- i
 }
+# adjusted Rand index is used to evaluation the clustering
 randIndex(table(mymodule,truemodule),adjust=F)
 }
 \author{
