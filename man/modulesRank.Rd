@@ -2,7 +2,7 @@
 % Please edit documentation in R/MODA.R
 \name{modulesRank}
 \alias{modulesRank}
-\title{Modules rank}
+\title{Modules rank from recursive communities detection}
 \usage{
 modulesRank(W, modulefile, GeneNames)
 }

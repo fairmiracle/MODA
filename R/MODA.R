@@ -226,6 +226,7 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
 #' @keywords community detection
 #' 
 #' @import igraph
+
 recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
     
     if (method == "fastgreedy")
@@ -292,6 +293,7 @@ modulesRank <- function(W,modulefile,GeneNames){
         write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
     }
+    length(rlines)
 }
 
 #' Modules detection by Louvain algorithm
@@ -320,27 +322,32 @@ modulesRank <- function(W,modulefile,GeneNames){
 #' @import igraph
 #' @examples
 #' data(synthetic)
-#' ResultFolder = 'ForSynthetic' # where middle files are stored
-#' CuttingCriterion = 'Density' # could be Density or Modularity
-#' indicator1 = 'X'     # indicator for data profile 1
-#' indicator2 = 'Y'      # indicator for data profile 2
-#' specificTheta = 0.1 #threshold to define condition specific modules
-#' conservedTheta = 0.1#threshold to define conserved modules
-#' intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
-#' indicator1,CuttingCriterion) 
-
+#' ResultFolder <- 'ForSynthetic' # where middle files are stored
+#' indicator <- 'X'     # indicator for data profile 1
+#' GeneNames <- colnames(datExpr1)
+#' intModules1 <- WeightedModuleDetection(datExpr1,ResultFolder,indicator,GeneNames)
+#' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
+#' mymodule <- rep(0,500)
+#' assigntable <- readLines('ForSynthetic')
+#' for (i in 1:length(assigntable)){
+#' ap=strsplit(assigntable[i],'\t')[[1]]
+#' ap=as.numeric(ap[2:length(ap)])
+#' mymodule[ap] <- i
+#' }
+#' randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
-WeightedModuleLouvain <- function(datExpr,foldername,indicatename,GeneNames,
-                                  maxsize=100, minsize=3, power=6, tao=0.2){
-    ADJ1 <- abs(cor(datExpr,use="p"))^power
+WeightedModuleDetection <- function(datExpr,foldername,indicatename,GeneNames,
+                                  maxsize=200, minsize=3, power=6, tao=0.2){
+    ADJ <- abs(cor(datExpr,use="p"))^power
     ADJ[ADJ < tao] <- 0
     g <- graph_from_adjacency_matrix(ADJ,mode='undirected',weighted=TRUE)
     V(g)$name=1:length(V(g))
-    E(g)$weight = net[,3]
     recursiveigraph(g,foldername,'louvain')
-    modulesRank(ADJ,foldername,GeneNames)
+    num <- modulesRank(ADJ,foldername,GeneNames)
+    num
 }
+
 #' Illustration of two networks comparison
 #' 
 #' Compare the background network and a condition-specific network. A Jaccard

@@ -2,7 +2,7 @@
 % Please edit documentation in R/MODA.R
 \name{recursiveigraph}
 \alias{recursiveigraph}
-\title{Modules identification by Recursive community detection}
+\title{Modules identification by recursive community detection}
 \usage{
 recursiveigraph(g, savefile, method = c("fastgreedy", "louvain"))
 }
@@ -13,12 +13,9 @@ recursiveigraph(g, savefile, method = c("fastgreedy", "louvain"))
 
 \item{method}{specify the community detection algorithm}
 }
-\value{
-The number of clusters
-}
 \description{
 Modules detection using igraph's community detection algorithms, when the
-resulted module is larger than expected, it is further devided
+resulted module is larger than expected, it is further devided by the same program
 }
 \author{
 Dong Li, \email{dxl466@cs.bham.ac.uk}

@@ -3,7 +3,7 @@
 export(CompareAllNets)
 export(PartitionDensity)
 export(PartitionModularity)
-export(WeightedModuleLouvain)
+export(WeightedModuleDetection)
 export(WeightedModulePartitionDensity)
 export(comparemodulestwonets)
 import(WGCNA)
