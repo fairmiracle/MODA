@@ -252,10 +252,7 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
                                     GeneNames, power=6, nn=10, k=2){
     dir.create(file.path('./', foldername), showWarnings = FALSE)
     ADJ1=abs(cor(datExpr,use="p"))^power
-    dissADJ=1-ADJ1
-    dissTOM=TOMdist(ADJ1)  # == 1 - TOMsimilarity(ADJ1)
-    collectGarbage()
-    
+ 
     W = TOMsimilarity(ADJ1)   # similarity matrix
     A = make.affinity(W,nn)
     d <- apply(A, 1, sum)

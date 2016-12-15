@@ -29,7 +29,7 @@ where the parameter $\beta$ is chosen by approximate scale-free topology criteri
 When involving multiple networks comparison, e.g. multiple stresses or environmental perturbations on the same species, it is idea to has enough replicates for each condition. Because the accurate correlation coefficient is approximated by $1/sqrt(k)$ where $k$ is the number of replicates. But requiring large replicates is difficult in practice. We use a sample-saving approach to construct condition-specific co-expression networks for each single condition in MODA. Assume network $N_1$ is background, normally containing samples from all conditions, is constructed based on the correlation matrix from all samples. Then condition $D$ specific network $N_2$ is constructed from all samples minus samples belong to certain condition $D$ [@kuijjer2015estimating]. The differences between network $N_1$ and $N_1$ is supposed to reveal the effects of condition $D$.
 
 # Modules detection
-
+## Hierarchical clustering
 Basic module detection functions are provided by WGCNA [@langfelder2008wgcna], which uses hierarchical clustering to find modules. The cutting height of dendrogram relies on user-defined value. MODA selects this parameter based on the maximization of average modularity or density of the resulted modules.
 
 we conduct the experiment on the synthetic dataset which contains two expression profiles $datExpr1$ and $datExpr2$ with 500 genes, and each has 20 and 25 samples. Details of data generation can be found in supplementary file of MODA paper [@Li053496].
@@ -67,6 +67,9 @@ The selection of optimal cutting height for each expression profile would be sto
 ![Maximal partition density based hierarchical clustering for gene expression profile 1.](ForSynthetic/Partitions_X.png)
 
 At the same time, each module for each expression profile would be stored as plain text file, with the name indicator from $indicator1$ and $indicator2$. Each secondary directory under $ResultFolder$ has the same name of condition name, e.g $indicator2$, used to store differential analysis results.
+## Community detection
+
+## Opitmization based approach
 
 # Networks comparison
 After the module detection for background network and all condition-specific networks, we can compare them using following function
