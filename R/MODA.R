@@ -208,90 +208,71 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
     
     return (length(intModules))
 }
-
-#' Modules identification by recursive community detection
+#' Modules detection by spectral clustering
 #' 
-#' Modules detection using igraph's community detection algorithms, when the
-#' resulted module is larger than expected, it is further devided by the same program
+#' Module detection based on the spectral clustering algorithm, which mainly
+#' solve the eigendecomposition on Laplacian matrix
 #'
-#' @param g igraph object, the network to be partitioned
-#' @param savefile plain text, used to store module, each line as a module
-#' @param method specify the community detection algorithm
+#' @param datExpr gene expression profile, rows are samples and columns genes
+#' @param foldername where to store the clusters
+#' @param indicatename normally a specific tag of condition
+#' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^power
+#' @param nn the number of nearest neighbor, used to construct the affinity matrix
+#' @param k the number of clusters(modules)
 #'
-#' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
-#' large networks." Journal of statistical mechanics: theory and experiment 
-#' 2008.10 (2008): P10008.
+#' 
+#' @references Von Luxburg, Ulrike. "A tutorial on spectral clustering." 
+#' Statistics and computing 17.4 (2007): 395-416.
 #' 
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
-#' @keywords community detection
+#' @keywords cutting dendrogram
 #' 
-#' @import igraph
-
-recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
-    
-    if (method == "fastgreedy")
-        fc <- cluster_fast_greedy(g)
-    else if (method == "louvain")
-        fc <- cluster_louvain(g)
-    
-    memfc <- membership(fc)
-    msize <- sizes(fc)
-    
-    if(length(msize) > 1){
-        
-        for (i in 1:length(msize)) {
-            if(msize[i] < 100 & msize[i] >= 3){
-                mgeneids <- V(g)$name[which(memfc==i)]
-                #mgeneids <- as.numeric(mgeneids) - 1
-                cp = c()
-                for (k in 1:length(mgeneids)){
-                    cp = paste(cp,mgeneids[k],sep='\t')
-                }
-                write(cp,file = savefile,append = TRUE)
-            } else if (msize[i] > 100) {
-                #large modules, in recursive way
-                ids = which(memfc==i)
-                g2 <- induced.subgraph(graph=g,vids=ids)
-                recursiveigraph(g2,savefile,method)
-            } else {
-                next
-            }
-        }
-    }
-    else{
-        print(paste('Atom! with size',length(V(g)),sep=' '))
-        edges <- get.edgelist(g)
-        write.table(edges,paste(savefile,'Atomsize',length(V(g)),sep='_'),
-                    sep = "\t",row.names = FALSE,col.names = FALSE,
-                    quote = FALSE,append = TRUE)      
-    }
-}
-
-#' Modules rank from recursive communities detection
-#' 
-#' Assign the module scores by weights, and rank them from highest to lowest
 #'
-#' @param W Edges weights matrix for WGCN
-#' @param modulefile plain text, the same as savefile in \code{\link{recursiveigraph}}
-#' @param GeneNames Gene symbols, sometimes we need them instead of probe ids
-#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
-#' @seealso \code{\link{recursiveigraph}}
-#' 
 #' @import igraph
-
-modulesRank <- function(W,modulefile,GeneNames){
+#' @import cluster
+#' @examples
+#' data(synthetic)
+#' ResultFile <- 'ForSynthetic' # where middle files are stored
+#' indicator <- 'X'     # indicator for data profile 1
+#' GeneNames <- colnames(datExpr1)
+#' intModules1 <- WeightedModulePartitionSpectral(datExpr1,ResultFile,indicator,
+#' GeneNames,k=5)
+#' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
+#' mymodule <- rep(0,500)
+#' ResultFiles <- list.files(ResultFolder)
+#' for (i in 1:length(ResultFiles)){
+#'     ap=as.numeric(readLines(paste(ResultFolder,'/',ResultFiles[i],sep='')))
+#'     mymodule[ap] <- i
+#' }
+#' randIndex(table(mymodule,truemodule),adjust=F)
+#' @export
+#' 
+WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename, 
+                                    GeneNames, power=6, nn=10, k=2){
+    dir.create(file.path('./', foldername), showWarnings = FALSE)
+    ADJ1=abs(cor(datExpr,use="p"))^power
+    dissADJ=1-ADJ1
+    dissTOM=TOMdist(ADJ1)  # == 1 - TOMsimilarity(ADJ1)
+    collectGarbage()
     
-    rlines <- readLines(modulefile)
-    foldername <- paste(modulefile,'_modules',sep='')
-    dir.create(foldername, showWarnings = FALSE)
-    for (i in 1:length(rlines)) {
-        ap=strsplit(rlines[i],'\t')[[1]]
-        ap=ap[2:length(ap)]
-        mscore = sum(W[ap,ap])
-        write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,sep=''),
-                    quote = FALSE, row.names = FALSE, col.names = FALSE)
-    }
-    length(rlines)
+    W = TOMsimilarity(ADJ1)   # similarity matrix
+    A = make.affinity(W,nn)
+    d <- apply(A, 1, sum)
+    L <- diag(d)-A                        # unnormalized version
+    L <- diag(d^-0.5)%*%L%*% diag(d^-0.5) # normalized version
+    evL <- eigen(L,symmetric=TRUE)  # evL$values is decreasing sorted when symmetric=TRUE
+    Z <- evL$vectors[,(ncol(evL$vectors)-k+1):ncol(evL$vectors)]
+    spc <- pam(Z,k)
+    colorSpectralTom <- labels2colors(spc$cluster)
+    intModules = table(colorSpectralTom)
+    for(J in 1:length(intModules)){
+        idx <- which(colorSpectralTom == names(intModules)[J])
+        DenseGenes = GeneNames[idx]
+        densegenefile <- paste(foldername,"/DenseModuleGene_",
+                               indicatename,"_",J,".txt",sep="")
+        write.table(DenseGenes,densegenefile,sep = "\n",col.names = FALSE,
+                    row.names = FALSE,quote = FALSE)
+    }                                    
 }
 
 #' Modules detection by Louvain algorithm
@@ -335,7 +316,7 @@ modulesRank <- function(W,modulefile,GeneNames){
 #' randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
-WeightedModuleDetection <- function(datExpr,foldername,indicatename,GeneNames,
+WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneNames,
                                   maxsize=200, minsize=3, power=6, tao=0.2){
     ADJ <- abs(cor(datExpr,use="p"))^power
     ADJ[ADJ < tao] <- 0
