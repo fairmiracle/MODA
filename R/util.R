@@ -1,3 +1,5 @@
+##  utility
+
 #' Modules identification by recursive community detection
 #' 
 #' Modules detection using igraph's community detection algorithms, when the
@@ -83,26 +85,17 @@ modulesRank <- function(W,modulefile,GeneNames){
     length(rlines)
 }
 
+# Purity
 ClusterPurity <- function(clusters, classes) {
     sum(apply(table(classes, clusters), 2, max)) / length(clusters)
 }
 
-#Gaussian distance
+# Gaussian distance
 GaussianDis <- function(x1, x2, alpha=1) {
     exp(- alpha * norm(as.matrix(x1-x2), type="F"))
 }
 
-make.similarity <- function(my.data, similarity) {
-    N <- nrow(my.data)
-    S <- matrix(rep(NA,N^2), ncol=N)
-    for(i in 1:N) {
-        for(j in 1:N) {
-            S[i,j] <- GaussianDis(my.data[i,], my.data[j,])
-        }
-    }
-    S
-}
-
+# k-nearest neighorhood to filter affinity
 make.affinity <- function(S, n.neighboors=3) {
     N <- length(S[,1])
     if (n.neighboors >= N) {  # fully connected

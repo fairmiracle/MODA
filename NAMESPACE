@@ -3,7 +3,7 @@
 export(CompareAllNets)
 export(PartitionDensity)
 export(PartitionModularity)
-export(WeightedModulePartitionDensity)
+export(WeightedModulePartitionHierarchical)
 export(WeightedModulePartitionLouvain)
 export(WeightedModulePartitionSpectral)
 export(comparemodulestwonets)

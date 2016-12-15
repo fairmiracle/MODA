@@ -26,7 +26,7 @@ solve the eigendecomposition on Laplacian matrix
 }
 \examples{
 data(synthetic)
-ResultFolder <- 'ForSynthetic' # where middle files are stored
+ResultFile <- 'ForSynthetic' # where middle files are stored
 indicator <- 'X'     # indicator for data profile 1
 GeneNames <- colnames(datExpr1)
 intModules1 <- WeightedModulePartitionSpectral(datExpr1,ResultFile,indicator,

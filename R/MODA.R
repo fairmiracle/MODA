@@ -133,7 +133,7 @@ PartitionModularity <- function(ADJ, PartitionSet){
 
 #' @export
 #' 
-WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
+WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
                         cutmethod=c('Density','Modularity'), power=10){
     dir.create(file.path('./', foldername), showWarnings = FALSE)
     
@@ -208,6 +208,7 @@ WeightedModulePartitionDensity <- function(datExpr,foldername,indicatename,
     
     return (length(intModules))
 }
+
 #' Modules detection by spectral clustering
 #' 
 #' Module detection based on the spectral clustering algorithm, which mainly
