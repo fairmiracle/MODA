@@ -2,8 +2,8 @@ Package: MODA
 Type: Package
 Title: MODA: MOdule Differential Analysis for weighted gene
         co-expression network
-Version: 1.1.1
-Date: 2016-11-10
+Version: 1.1.2
+Date: 2016-12-16
 Author: Dong Li, James B. Brown, Luisa Orsini, Zhisong Pan, Guyu Hu and Shan He
 Maintainer: Dong Li <dxl466@cs.bham.ac.uk>
 Description: MODA can be used to estimate and construct condition-specific gene
@@ -12,7 +12,7 @@ Description: MODA can be used to estimate and construct condition-specific gene
     relevant biological processes.
 License: GPL (>= 2)
 Depends: R (>= 3.3)
-Imports: grDevices, graphics, stats, utils, WGCNA, dynamicTreeCut, igraph
+Imports: grDevices, graphics, stats, utils, WGCNA, dynamicTreeCut, igraph, AMOUNTAIN
 RoxygenNote: 5.0.1
 biocViews: GeneExpression, Microarray, DifferentialExpression, Network
 Suggests: BiocStyle, knitr, rmarkdown

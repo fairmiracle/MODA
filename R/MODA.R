@@ -128,8 +128,10 @@ PartitionModularity <- function(ADJ, PartitionSet){
 #' indicator2 = 'Y'      # indicator for data profile 2
 #' specificTheta = 0.1 #threshold to define condition specific modules
 #' conservedTheta = 0.1#threshold to define conserved modules
-#' intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+#' intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 #' indicator1,CuttingCriterion) 
+#' mymodule <- getPartition(ResultFolder)
+#' randIndex(table(mymodule,truemodule),adjust=F)
 
 #' @export
 #' 
@@ -217,6 +219,7 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
 #' @param datExpr gene expression profile, rows are samples and columns genes
 #' @param foldername where to store the clusters
 #' @param indicatename normally a specific tag of condition
+#' @param GeneNames normally the gene official names to replace the colnames of datExpr
 #' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^power
 #' @param nn the number of nearest neighbor, used to construct the affinity matrix
 #' @param k the number of clusters(modules)
@@ -233,18 +236,13 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
 #' @import cluster
 #' @examples
 #' data(synthetic)
-#' ResultFile <- 'ForSynthetic' # where middle files are stored
+#' ResultFolder <- 'ForSynthetic' # where middle files are stored
 #' indicator <- 'X'     # indicator for data profile 1
 #' GeneNames <- colnames(datExpr1)
-#' intModules1 <- WeightedModulePartitionSpectral(datExpr1,ResultFile,indicator,
+#' WeightedModulePartitionSpectral(datExpr1,ResultFolder,indicator,
 #' GeneNames,k=5)
 #' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-#' mymodule <- rep(0,500)
-#' ResultFiles <- list.files(ResultFolder)
-#' for (i in 1:length(ResultFiles)){
-#'     ap=as.numeric(readLines(paste(ResultFolder,'/',ResultFiles[i],sep='')))
-#'     mymodule[ap] <- i
-#' }
+#' mymodule <- getPartition(ResultFolder)
 #' randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
@@ -281,6 +279,7 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
 #' @param datExpr gene expression profile, rows are samples and columns genes
 #' @param foldername where to store the clusters
 #' @param indicatename normally a specific tag of condition
+#' @param GeneNames normally the gene official names to replace the colnames of datExpr
 #' @param maxsize the maximal nodes allowed in one module
 #' @param minsize the minimal nodes allowed in one module
 #' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^power
@@ -299,18 +298,12 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
 #' @import igraph
 #' @examples
 #' data(synthetic)
-#' ResultFile <- 'ForSynthetic' # where middle files are stored
+#' ResultFolder <- 'ForSynthetic' # where middle files are stored
 #' indicator <- 'X'     # indicator for data profile 1
 #' GeneNames <- colnames(datExpr1)
-#' intModules1 <- WeightedModuleDetection(datExpr1,ResultFile,indicator,GeneNames)
+#' intModules1 <- WeightedModulePartitionLouvain(datExpr1,ResultFolder,indicator,GeneNames)
 #' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-#' mymodule <- rep(0,500)
-#' assigntable <- readLines(paste(modulefile,'_modules',sep=''))
-#' for (i in 1:length(assigntable)){
-#' ap=strsplit(assigntable[i],'\t')[[1]]
-#' ap=as.numeric(ap[2:length(ap)])
-#' mymodule[ap] <- i
-#' }
+#' mymodule <- getPartition(ResultFolder)
 #' randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
@@ -323,6 +316,88 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
     recursiveigraph(g,foldername,'louvain')
     num <- modulesRank(ADJ,foldername,GeneNames)
     num
+}
+
+#' Modules detection by AMOUNTAIN algorithm
+#' 
+#' Module detection based on the AMOUNTAIN algorithm, which tries to find the  
+#' optimal module every time and use a modules extraction way
+#'
+#' @param datExpr gene expression profile, rows are samples and columns genes
+#' @param foldername where to store the clusters
+#' @param GeneNames normally the gene official names to replace the colnames of datExpr
+#' @param Nmodule the number of clusters(modules)
+#' @param maxsize the maximal nodes allowed in one module
+#' @param minsize the minimal nodes allowed in one module
+#' @param pwr the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr
+#' @param tao the threshold to cut the adjacency matrix
+#' 
+#' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
+#' large networks." Journal of statistical mechanics: theory and experiment 
+#' 2008.10 (2008): P10008.
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @keywords cutting dendrogram
+#' 
+#'
+#' @import AMOUNTAIN
+#' @examples
+#' data(synthetic)
+#' ResultFolder <- 'ForSynthetic' # where middle files are stored
+#' GeneNames <- colnames(datExpr1)
+#' intModules1 <- WeightedModulePartitionAmoutain(datExpr1,5,ResultFolder,
+#' GeneNames,maxsize=100,minsize=50)
+#' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
+#' mymodule <- getPartition(ResultFolder)
+#' randIndex(table(mymodule,truemodule),adjust=F)
+#' @export
+#' 
+WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames,
+                                    maxsize=200, minsize=3, power=6, tao=0.2){
+    W <- abs(cor(datExpr,use="p"))^power
+    W[W < tao] <- 0
+    N = dim(W)[1]
+    z <- rep(0,N)
+    idx <- 1
+    dir.create(foldername, showWarnings = FALSE)
+    saveAtomfile <- paste(foldername,'/AtomModule',sep='')
+    for (ii in 1:Nmodule) {
+        abegin = 0.01
+        aend = 0.9
+        for (i in 1:20) {
+            #x <- CGPFixSS(W,z,rep(1/N,N),a=(abegin+aend)/2,lambda=0,maxiter = 50)
+            x <- moduleIdentificationGPFixSS(W,z,rep(1/N,N),a=(abegin+aend)/2,
+                                             lambda=0,maxiter = 50)
+            predictedid <- which(x[[2]]!=0)
+            if(length(predictedid) > maxsize){
+                abegin = (abegin+aend)/2
+            }else if (length(predictedid) < minsize){
+                aend = (abegin+aend)/2
+            }else
+                break
+        }
+        
+        if(length(predictedid) <= maxsize){
+            modulescore = sum(W[predictedid,predictedid])
+            write.table(GeneNames[predictedid],file = paste(foldername,'/',
+                        floor(modulescore),'-moduleid-',idx,'.txt',sep=''),
+                        quote = FALSE, row.names = FALSE, col.names = FALSE)
+            idx <- idx+1
+        }
+        else if(length(predictedid) > maxsize){
+            modulescoreW = W[predictedid,predictedid]
+            print(paste('Atom! with size',length(predictedid),sep=' '))
+            tmpstr = as.numeric(GeneNames[predictedid])-1
+            forTotalcompletegraph(tmpstr,modulescoreW,saveAtomfile)
+        }
+        W = W[-predictedid,-predictedid]
+        GeneNames = GeneNames[-predictedid]
+        N = length(GeneNames)
+        print(paste('Finishing module ',ii,sep=''))
+        
+        if(N < 3 | sum(W)==0)
+            break
+    }
 }
 
 #' Illustration of two networks comparison

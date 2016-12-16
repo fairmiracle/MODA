@@ -14,6 +14,8 @@ WeightedModulePartitionSpectral(datExpr, foldername, indicatename, GeneNames,
 
 \item{indicatename}{normally a specific tag of condition}
 
+\item{GeneNames}{normally the gene official names to replace the colnames of datExpr}
+
 \item{power}{the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^power}
 
 \item{nn}{the number of nearest neighbor, used to construct the affinity matrix}
@@ -26,18 +28,13 @@ solve the eigendecomposition on Laplacian matrix
 }
 \examples{
 data(synthetic)
-ResultFile <- 'ForSynthetic' # where middle files are stored
+ResultFolder <- 'ForSynthetic' # where middle files are stored
 indicator <- 'X'     # indicator for data profile 1
 GeneNames <- colnames(datExpr1)
-intModules1 <- WeightedModulePartitionSpectral(datExpr1,ResultFile,indicator,
+WeightedModulePartitionSpectral(datExpr1,ResultFolder,indicator,
 GeneNames,k=5)
 truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-mymodule <- rep(0,500)
-ResultFiles <- list.files(ResultFolder)
-for (i in 1:length(ResultFiles)){
-    ap=as.numeric(readLines(paste(ResultFolder,'/',ResultFiles[i],sep='')))
-    mymodule[ap] <- i
-}
+mymodule <- getPartition(ResultFolder)
 randIndex(table(mymodule,truemodule),adjust=F)
 }
 \author{

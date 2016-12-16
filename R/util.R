@@ -73,13 +73,14 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
 modulesRank <- function(W,modulefile,GeneNames){
     
     rlines <- readLines(modulefile)
-    foldername <- paste(modulefile,'_modules',sep='')
+    file.remove(modulefile)
+    foldername <- modulefile
     dir.create(foldername, showWarnings = FALSE)
     for (i in 1:length(rlines)) {
         ap=strsplit(rlines[i],'\t')[[1]]
         ap=ap[2:length(ap)]
         mscore = sum(W[ap,ap])
-        write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,sep=''),
+        write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,'.txt',sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
     }
     length(rlines)
@@ -112,4 +113,38 @@ make.affinity <- function(S, n.neighboors=3) {
         }
     }
     A  
+}
+
+# get identified partitionAssignment, only for synthetic data where gene names are numbers
+getPartition <- function(ResultFolder){
+    mymodule <- rep(0,500)
+    ResultFiles <- list.files(ResultFolder)
+    ResultFiles <- ResultFiles[grepl('.txt',ResultFiles)]
+    for (i in 1:length(ResultFiles)){
+        ap <- as.numeric(readLines(paste(ResultFolder,'/',ResultFiles[i],sep='')))
+        mymodule[ap] <- i
+    }
+    mymodule
+}
+
+# a large clique, even AMOUNTAIN cannot devided it
+forTotalcompletegraph <- function(predictedid,modulescoreW,savefile1){
+    fixedlen = 60
+    for (i in 1:(floor(length(predictedid)/fixedlen))) {
+        cp = c()
+        for (k in (fixedlen*(i-1)+1):(fixedlen*i)){
+            cp = paste(cp,predictedid[k],sep='\t')
+        }
+        mscore = sum(modulescoreW[(fixedlen*(i-1)+1):(fixedlen*i),(fixedlen*(i-1)+1):(fixedlen*i)])
+        write(paste(mscore,cp,sep=''),file = savefile1,append = TRUE)
+    }
+    
+    if( (length(predictedid) - fixedlen*i)>=3){
+        cp = c()
+        for (k in (fixedlen*i+1):length(predictedid)){
+            cp = paste(cp,predictedid[k],sep='\t')
+        }
+        mscore = sum(modulescoreW[(fixedlen*i+1):length(predictedid),(fixedlen*i+1):length(predictedid)])
+        write(paste(mscore,cp,sep=''),file = savefile1,append = TRUE)
+    }
 }

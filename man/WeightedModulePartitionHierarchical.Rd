@@ -35,8 +35,10 @@ indicator1 = 'X'     # indicator for data profile 1
 indicator2 = 'Y'      # indicator for data profile 2
 specificTheta = 0.1 #threshold to define condition specific modules
 conservedTheta = 0.1#threshold to define conserved modules
-intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 indicator1,CuttingCriterion) 
+mymodule <- getPartition(ResultFolder)
+randIndex(table(mymodule,truemodule),adjust=F)
 }
 \author{
 Dong Li, \email{dxl466@cs.bham.ac.uk}
