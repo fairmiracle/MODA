@@ -12,7 +12,7 @@ Description: MODA can be used to estimate and construct condition-specific gene
     relevant biological processes.
 License: GPL (>= 2)
 Depends: R (>= 3.3)
-Imports: grDevices, graphics, stats, utils, WGCNA, dynamicTreeCut, igraph, AMOUNTAIN
+Imports: grDevices, graphics, stats, utils, WGCNA, dynamicTreeCut, igraph, AMOUNTAIN, RColorBrewer
 RoxygenNote: 5.0.1
 biocViews: GeneExpression, Microarray, DifferentialExpression, Network
 Suggests: BiocStyle, knitr, rmarkdown
