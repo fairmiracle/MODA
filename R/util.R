@@ -18,7 +18,8 @@
 #' 
 #' @import igraph
 
-recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
+recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain'),
+                            maxsize=200, minsize=30){
     
     if (method == "fastgreedy")
         fc <- cluster_fast_greedy(g)
@@ -31,7 +32,7 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
     if(length(msize) > 1){
         
         for (i in 1:length(msize)) {
-            if(msize[i] < 100 & msize[i] >= 3){
+            if(msize[i] <= maxsize & msize[i] >= minsize){
                 mgeneids <- V(g)$name[which(memfc==i)]
                 #mgeneids <- as.numeric(mgeneids) - 1
                 cp = c()
@@ -39,7 +40,7 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
                     cp = paste(cp,mgeneids[k],sep='\t')
                 }
                 write(cp,file = savefile,append = TRUE)
-            } else if (msize[i] > 100) {
+            } else if (msize[i] > maxsize) {
                 #large modules, in recursive way
                 ids = which(memfc==i)
                 g2 <- induced.subgraph(graph=g,vids=ids)
@@ -62,7 +63,6 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
 #' 
 #' Assign the module scores by weights, and rank them from highest to lowest
 #'
-#' @param W Edges weights matrix for WGCN
 #' @param modulefile plain text, the same as savefile in \code{\link{recursiveigraph}}
 #' @param GeneNames Gene symbols, sometimes we need them instead of probe ids
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
@@ -70,17 +70,18 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain')){
 #' 
 #' @import igraph
 
-modulesRank <- function(W,modulefile,GeneNames){
+modulesRank <- function(foldername,indicator,GeneNames){
     
-    rlines <- readLines(modulefile)
-    file.remove(modulefile)
-    foldername <- modulefile
-    dir.create(foldername, showWarnings = FALSE)
+    tmfile <- paste(foldername,'tmp.txt',sep='')
+    rlines <- readLines(tmfile)
+    file.remove(tmfile)
     for (i in 1:length(rlines)) {
-        ap=strsplit(rlines[i],'\t')[[1]]
-        ap=ap[2:length(ap)]
-        mscore = sum(W[ap,ap])
-        write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,'.txt',sep=''),
+        ap <- strsplit(rlines[i],'\t')[[1]]
+        ap <- as.numeric(ap[2:length(ap)])
+        #mscore <- sum(W[ap,ap])
+        #write.table(GeneNames[match(ap,rownames(W))],file = paste(foldername,'/',floor(mscore),'-moduleid-',i,'.txt',sep=''),
+        #            quote = FALSE, row.names = FALSE, col.names = FALSE)
+        write.table(GeneNames[ap],file = paste(foldername,'/DenseModuleGene_',indicator,'_',i,'.txt',sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
     }
     length(rlines)
