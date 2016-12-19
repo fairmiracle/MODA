@@ -22,6 +22,9 @@ WeightedModulePartitionSpectral(datExpr, foldername, indicatename, GeneNames,
 
 \item{k}{the number of clusters(modules)}
 }
+\value{
+None
+}
 \description{
 Module detection based on the spectral clustering algorithm, which mainly
 solve the eigendecomposition on Laplacian matrix

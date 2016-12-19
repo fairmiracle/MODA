@@ -24,6 +24,9 @@ WeightedModulePartitionAmoutain(datExpr, Nmodule, foldername, GeneNames,
 
 \item{pwr}{the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr}
 }
+\value{
+None
+}
 \description{
 Module detection based on the AMOUNTAIN algorithm, which tries to find the  
 optimal module every time and use a modules extraction way

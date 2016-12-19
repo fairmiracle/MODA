@@ -4,7 +4,7 @@
 \alias{CompareAllNets}
 \title{Illustration of network comparison}
 \usage{
-CompareAllNets(ResultFolder, intModules, speciesName, intconditionModules,
+CompareAllNets(ResultFolder, intModules, indicator, intconditionModules,
   conditionNames, specificTheta, conservedTheta)
 }
 \arguments{
@@ -12,7 +12,7 @@ CompareAllNets(ResultFolder, intModules, speciesName, intconditionModules,
 
 \item{intModules}{how many modules in the background network}
 
-\item{speciesName}{identifier of current profile, served as a tag in name}
+\item{indicator}{identifier of current profile, served as a tag in name}
 
 \item{intconditionModules}{a numeric vector, each of them is the number 
 of modules in each condition-specific network. Or just single number}

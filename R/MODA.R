@@ -224,6 +224,7 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
 #' @param nn the number of nearest neighbor, used to construct the affinity matrix
 #' @param k the number of clusters(modules)
 #'
+#' @return None
 #' 
 #' @references Von Luxburg, Ulrike. "A tutorial on spectral clustering." 
 #' Statistics and computing 17.4 (2007): 395-416.
@@ -332,6 +333,8 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' @param pwr the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr
 #' @param tao the threshold to cut the adjacency matrix
 #' 
+#' @return None
+#' 
 #' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
 #' large networks." Journal of statistical mechanics: theory and experiment 
 #' 2008.10 (2008): P10008.
@@ -339,7 +342,6 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
 #' @keywords cutting dendrogram
 #' 
-#'
 #' @import AMOUNTAIN
 #' @examples
 #' data(synthetic)
@@ -458,7 +460,7 @@ comparemodulestwonets <- function(sourcehead,nm1,nm2,ind1,ind2){
 #'
 #' @param ResultFolder where to store results
 #' @param intModules how many modules in the background network
-#' @param speciesName identifier of current profile, served as a tag in name
+#' @param indicator identifier of current profile, served as a tag in name
 #' @param intconditionModules a numeric vector, each of them is the number 
 #' of modules in each condition-specific network. Or just single number
 #' @param conditionNames a character vector, each of them is the name 
@@ -494,13 +496,13 @@ comparemodulestwonets <- function(sourcehead,nm1,nm2,ind1,ind2){
 #' 
 #' @export
 #' 
-CompareAllNets <-function(ResultFolder,intModules,speciesName,
+CompareAllNets <-function(ResultFolder,intModules,indicator,
                           intconditionModules,conditionNames,specificTheta,
                           conservedTheta){
     for (i in 1:length(conditionNames)) {
         ArrayGroup1 <- comparemodulestwonets(ResultFolder,intModules,
                     intconditionModules[i],paste('/DenseModuleGene_',
-                    speciesName,sep=''),paste('/DenseModuleGene_',
+                        indicator,sep=''),paste('/DenseModuleGene_',
                     conditionNames[i],sep=''))
         dir.create(paste(ResultFolder,'/',conditionNames[i],sep=''), showWarnings = FALSE)
         fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
@@ -531,6 +533,124 @@ CompareAllNets <-function(ResultFolder,intModules,speciesName,
         write.table(conservedmoduleid,file = paste(fileprefix,
                     'conservedModuleid.txt',sep=''),
                     row.names = FALSE, col.names = FALSE)
+    }
+}
+
+#' Statistics of all conditions
+#' 
+#' Statistics of all conditions. To highlight conserved or condition-specific 
+#' by counting how frequent each module is lablelled as which, and then 
+#' visualize the frequency by bar plot. 
+#'
+#' @param ResultFolder where to store results
+#' @param intModules how many modules in the background network
+#' @param indicator identifier of current profile, served as a tag in name
+#' @param conditionNames a character vector, each of them is the name 
+#' of condition. Or just single name
+#' @return None
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @seealso \code{\link{WeightedModulePartitionDensity}},
+#' \code{\link{CompareAllNets}}
+#' @keywords module differential Statistics
+#' 
+#' @import RColorBrewer
+#' 
+#' @export
+#' 
+ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
+    require(RColorBrewer)
+    Ncon <- length(conditionNames)
+    wide <- matrix (0,nrow = Ncon, ncol = intModules)
+    for (i in 1:Ncon) {
+        fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
+        tad <- read.table(paste(fileprefix,'sepcificModuleid.txt',sep=''),header = TRUE, sep = "")
+        moduleid <-tad[,1]
+        wide[i,moduleid] <- 1
+    }
+    
+    # sequential <- brewer.pal(length(conditionNames), "Greens")
+    # sequential <- brewer.pal(length(conditionNames), col=c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green'))
+    # sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
+    sequential <- brewer.pal(Ncon, "Set1")
+    pdf(paste(ResultFolder,'/specificmembership.pdf',sep=''),width = 10, height = 5)
+    #  png('specificmembership.png',width = 1000, height = 500)
+    barplot(wide,
+            names.arg = 1:intModules,
+            cex.names = 0.7, # makes x-axis labels small enough to show all
+            col = sequential, # colors
+            xlab = "module id",
+            ylab = "if in condition specific network",
+            xlim = c(0,intModules+1), # these two lines allow space for the legend
+            main = 'Frequency of condition specific module',
+            width = 0.75) # these two lines allow space for the legend
+    legend("topright", 
+           legend = conditionNames, #in order from top to bottom
+           fill = sequential, # 6:1 reorders so legend order matches graph
+           title = "conditons",cex = 0.75)
+    dev.off()
+    
+    for (ispec in 1:Ncon) {
+        idx1 <- intersect(which(colSums(wide)!=0), which(colSums(wide) <= ispec))
+        uniqueaffiliation <- vector('list',Ncon)
+        names (uniqueaffiliation) <- conditionNames
+        for (i in 1:length(idx1)) {
+            tmp <- which(wide[,idx1[i]] == 1)
+            for (j in 1:length(tmp)) {
+                uniqueaffiliation[[tmp[j]]] <- union(uniqueaffiliation[[tmp[j]]],idx1[i])
+            }
+        }
+        write(paste('If we allow at most ', ispec ,' share one condition\n',sep=''),
+              file = paste(ResultFolder,'/specificmembership.txt',sep=''),append=TRUE)
+        for (i in 1:Ncon) {
+            write(conditionNames[i],file = paste(ResultFolder,'/specificmembership.txt',sep=''),append=TRUE)
+            if(is.null(uniqueaffiliation[[i]])){
+                write('NULL',file = paste(ResultFolder,'/specificmembership.txt',sep=''),append = TRUE)
+            }else{
+                write(uniqueaffiliation[[i]],file = paste(ResultFolder,'/specificmembership.txt',sep=''),append = TRUE)
+            }
+            write('\n',file = paste(ResultFolder,'/specificmembership.txt',sep=''),append=TRUE)
+        }
+    }
+    idx1 <- which(colSums(wide)!=0)
+    
+    wide <- matrix (0,nrow = Ncon, ncol = intModules)
+    for (i in 1:length(conditionNames)) {
+        fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
+        tad <- read.table(paste(fileprefix,'conservedModuleid.txt',sep=''),header = TRUE, sep = "")
+        moduleid <- tad[,1]
+        wide[i,moduleid] <- 1
+    }
+    #sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
+    sequential <- brewer.pal(Ncon, "Set1")
+    pdf(paste(ResultFolder,'/conservedmembership.pdf',sep=''),width = 10, height = 5)
+    #  png('specificmembership.png',width = 1000, height = 500)
+    barplot(wide,
+            names.arg = 1:intModules,
+            cex.names = 0.7, # makes x-axis labels small enough to show all
+            col = sequential, # colors
+            xlab = "module id",
+            ylab = "if in condition specific network",
+            xlim = c(0,intModules+1), # these two lines allow space for the legend
+            main = 'Frequency of condition specific module',
+            width = 0.75) # these two lines allow space for the legend
+    legend("topright", 
+           legend =conditionNames, #in order from top to bottom
+           fill = sequential, # 6:1 reorders so legend order matches graph
+           title = "conditons",cex = 0.75)
+    dev.off()
+    
+    idx2 <- which(colSums(wide)!=0)
+    write(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),append = FALSE)
+    
+    dir.create(paste(ResultFolder,'/','interestedModules',sep=''))
+    for (i in idx1) {
+        file.copy(paste(ResultFolder,"/DenseModuleGene_",indicator,"_",i,".txt",sep=""), 
+                  paste(ResultFolder,'/','interestedModules',sep=''))
+    }
+    for (i in idx2) {
+        file.copy(paste(ResultFolder,"/DenseModuleGene_",indicator,"_",i,".txt",sep=""), 
+                  paste(ResultFolder,'/','interestedModules',sep=''))
     }
 }
 
