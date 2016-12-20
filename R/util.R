@@ -119,7 +119,13 @@ make.affinity <- function(S, n.neighboors=3) {
     A  
 }
 
-# get identified partitionAssignment, only for synthetic data where gene names are numbers
+#' Get numeric partition from folder
+#' 
+#' Get identified partitionAssignment, only for synthetic data where gene names are numbers
+#'
+#' @param ResultFolder folder used to save modules
+#' @return Number of partitions
+#' 
 getPartition <- function(ResultFolder){
     mymodule <- rep(0,500)
     ResultFiles <- list.files(ResultFolder)

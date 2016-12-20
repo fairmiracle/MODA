@@ -565,7 +565,6 @@ CompareAllNets <-function(ResultFolder,intModules,indicator,
 #' @export
 #' 
 ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
-    require(RColorBrewer)
     Ncon <- length(conditionNames)
     wide <- matrix (0,nrow = Ncon, ncol = intModules)
     for (i in 1:Ncon) {
@@ -638,7 +637,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
             xlab = "module id",
             ylab = "if in condition specific network",
             xlim = c(0,intModules+1), # these two lines allow space for the legend
-            main = 'Frequency of condition specific module',
+            main = 'Frequency of conserved module',
             width = 0.75) # these two lines allow space for the legend
     legend("topright", 
            legend =conditionNames, #in order from top to bottom
