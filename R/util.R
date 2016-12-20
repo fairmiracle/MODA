@@ -8,6 +8,8 @@
 #' @param g igraph object, the network to be partitioned
 #' @param savefile plain text, used to store module, each line as a module
 #' @param method specify the community detection algorithm
+#' @param maxsize maximal module size
+#' @param minsize minimal module size
 #'
 #' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
 #' large networks." Journal of statistical mechanics: theory and experiment 

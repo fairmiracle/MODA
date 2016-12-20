@@ -49,6 +49,5 @@ Blondel, Vincent D., et al. "Fast unfolding of communities in
 large networks." Journal of statistical mechanics: theory and experiment 
 2008.10 (2008): P10008.
 }
-\keyword{cutting}
-\keyword{dendrogram}
+\keyword{optimization}
 

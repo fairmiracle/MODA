@@ -342,7 +342,7 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' 2008.10 (2008): P10008.
 #' 
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
-#' @keywords cutting dendrogram
+#' @keywords optimization
 #' 
 #' @import AMOUNTAIN
 #' @examples
@@ -396,6 +396,7 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
         }
         W = W[-predictedid,-predictedid]
         GeneNames = GeneNames[-predictedid]
+        z = z[-predictedid]
         N = length(GeneNames)
         print(paste('Finishing module ',ii,sep=''))
         

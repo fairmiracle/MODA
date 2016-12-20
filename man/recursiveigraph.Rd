@@ -13,6 +13,10 @@ recursiveigraph(g, savefile, method = c("fastgreedy", "louvain"),
 \item{savefile}{plain text, used to store module, each line as a module}
 
 \item{method}{specify the community detection algorithm}
+
+\item{maxsize}{maximal module size}
+
+\item{minsize}{minimal module size}
 }
 \description{
 Modules detection using igraph's community detection algorithms, when the
