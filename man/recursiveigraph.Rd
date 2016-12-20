@@ -4,7 +4,8 @@
 \alias{recursiveigraph}
 \title{Modules identification by recursive community detection}
 \usage{
-recursiveigraph(g, savefile, method = c("fastgreedy", "louvain"))
+recursiveigraph(g, savefile, method = c("fastgreedy", "louvain"),
+  maxsize = 200, minsize = 30)
 }
 \arguments{
 \item{g}{igraph object, the network to be partitioned}

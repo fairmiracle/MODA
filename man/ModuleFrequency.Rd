@@ -28,7 +28,10 @@ visualize the frequency by bar plot.
 Dong Li, \email{dxl466@cs.bham.ac.uk}
 }
 \seealso{
-\code{\link{WeightedModulePartitionDensity}},
+\code{\link{WeightedModulePartitionHierarchical}},
+\code{\link{WeightedModulePartitionLouvain}},
+\code{\link{WeightedModulePartitionSpectral}},
+\code{\link{WeightedModulePartitionAmoutain}},
 \code{\link{CompareAllNets}}
 }
 \keyword{Statistics}

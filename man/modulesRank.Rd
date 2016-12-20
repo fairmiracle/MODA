@@ -4,12 +4,12 @@
 \alias{modulesRank}
 \title{Modules rank from recursive communities detection}
 \usage{
-modulesRank(W, modulefile, GeneNames)
+modulesRank(foldername, indicator, GeneNames)
 }
 \arguments{
-\item{W}{Edges weights matrix for WGCN}
+\item{foldername}{folder used to save modules}
 
-\item{modulefile}{plain text, the same as savefile in \code{\link{recursiveigraph}}}
+\item{indicator}{normally a specific tag of condition}
 
 \item{GeneNames}{Gene symbols, sometimes we need them instead of probe ids}
 }

@@ -63,7 +63,8 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain'),
 #' 
 #' Assign the module scores by weights, and rank them from highest to lowest
 #'
-#' @param modulefile plain text, the same as savefile in \code{\link{recursiveigraph}}
+#' @param foldername folder used to save modules
+#' @param indicator normally a specific tag of condition
 #' @param GeneNames Gene symbols, sometimes we need them instead of probe ids
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
 #' @seealso \code{\link{recursiveigraph}}

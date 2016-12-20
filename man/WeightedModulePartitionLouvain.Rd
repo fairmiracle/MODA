@@ -5,7 +5,7 @@
 \title{Modules detection by Louvain algorithm}
 \usage{
 WeightedModulePartitionLouvain(datExpr, foldername, indicatename, GeneNames,
-  maxsize = 200, minsize = 3, power = 6, tao = 0.2)
+  maxsize = 200, minsize = 30, power = 6, tao = 0.2)
 }
 \arguments{
 \item{datExpr}{gene expression profile, rows are samples and columns genes}

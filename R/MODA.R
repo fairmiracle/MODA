@@ -332,7 +332,7 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' @param Nmodule the number of clusters(modules)
 #' @param maxsize the maximal nodes allowed in one module
 #' @param minsize the minimal nodes allowed in one module
-#' @param pwr the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr
+#' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr
 #' @param tao the threshold to cut the adjacency matrix
 #' 
 #' @return None

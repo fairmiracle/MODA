@@ -20,9 +20,9 @@ WeightedModulePartitionAmoutain(datExpr, Nmodule, foldername, GeneNames,
 
 \item{minsize}{the minimal nodes allowed in one module}
 
-\item{tao}{the threshold to cut the adjacency matrix}
+\item{power}{the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr}
 
-\item{pwr}{the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr}
+\item{tao}{the threshold to cut the adjacency matrix}
 }
 \value{
 None

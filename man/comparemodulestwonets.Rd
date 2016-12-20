@@ -32,9 +32,9 @@ ResultFolder = 'ForSynthetic' # where middle files are stored
 CuttingCriterion = 'Density' # could be Density or Modularity
 indicator1 = 'X'     # indicator for data profile 1
 indicator2 = 'Y'      # indicator for data profile 2
-intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 indicator1,CuttingCriterion) 
-intModules2 <- WeightedModulePartitionDensity(datExpr2,ResultFolder,
+intModules2 <- WeightedModulePartitionHierarchical(datExpr2,ResultFolder,
 indicator2,CuttingCriterion) 
 JaccardMatrix <- comparemodulestwonets(ResultFolder,intModules1,intModules2,
 paste('/DenseModuleGene_',indicator1,sep=''),
