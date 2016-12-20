@@ -428,9 +428,9 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
 #' CuttingCriterion = 'Density' # could be Density or Modularity
 #' indicator1 = 'X'     # indicator for data profile 1
 #' indicator2 = 'Y'      # indicator for data profile 2
-#' intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+#' intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 #' indicator1,CuttingCriterion) 
-#' intModules2 <- WeightedModulePartitionDensity(datExpr2,ResultFolder,
+#' intModules2 <- WeightedModulePartitionHierarchical(datExpr2,ResultFolder,
 #' indicator2,CuttingCriterion) 
 #' JaccardMatrix <- comparemodulestwonets(ResultFolder,intModules1,intModules2,
 #' paste('/DenseModuleGene_',indicator1,sep=''),
@@ -477,7 +477,7 @@ comparemodulestwonets <- function(sourcehead,nm1,nm2,ind1,ind2){
 #' @return None
 #' 
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
-#' @seealso \code{\link{WeightedModulePartitionDensity}},
+#' @seealso \code{\link{WeightedModulePartitionHierarchical}},
 #' \code{\link{comparemodulestwonets}}
 #' @keywords module differential
 #' 
@@ -489,9 +489,9 @@ comparemodulestwonets <- function(sourcehead,nm1,nm2,ind1,ind2){
 #' indicator2 = 'Y'      # indicator for data profile 2
 #' specificTheta = 0.1 #threshold to define condition specific modules
 #' conservedTheta = 0.1#threshold to define conserved modules
-#' intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+#' intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 #' indicator1,CuttingCriterion) 
-#' intModules2 <- WeightedModulePartitionDensity(datExpr2,ResultFolder,
+#' intModules2 <- WeightedModulePartitionHierarchical(datExpr2,ResultFolder,
 #' indicator2,CuttingCriterion) 
 #' CompareAllNets(ResultFolder,intModules1,indicator1,intModules2,indicator2,
 #' specificTheta,conservedTheta)
@@ -552,7 +552,10 @@ CompareAllNets <-function(ResultFolder,intModules,indicator,
 #' @return None
 #' 
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
-#' @seealso \code{\link{WeightedModulePartitionDensity}},
+#' @seealso \code{\link{WeightedModulePartitionHierarchical}},
+#' \code{\link{WeightedModulePartitionLouvain}},
+#' \code{\link{WeightedModulePartitionSpectral}},
+#' \code{\link{WeightedModulePartitionAmoutain}},
 #' \code{\link{CompareAllNets}}
 #' @keywords module differential Statistics
 #' 
