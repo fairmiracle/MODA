@@ -499,7 +499,7 @@ comparemodulestwonets <- function(sourcehead,nm1,nm2,ind1,ind2){
 #' 
 #' @export
 #' 
-CompareAllNets <-function(ResultFolder,intModules,indicator,
+CompareAllNets <- function(ResultFolder,intModules,indicator,
                           intconditionModules,conditionNames,specificTheta,
                           conservedTheta){
     for (i in 1:length(conditionNames)) {
@@ -646,8 +646,9 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
     dev.off()
     
     idx2 <- which(colSums(wide)!=0)
-    write(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),append = FALSE)
-    
+    #write(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),append = FALSE)
+    write.table(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),
+                row.names = FALSE, col.names = FALSE)
     dir.create(paste(ResultFolder,'/','interestedModules',sep=''))
     for (i in idx1) {
         file.copy(paste(ResultFolder,"/DenseModuleGene_",indicator,"_",i,".txt",sep=""), 
