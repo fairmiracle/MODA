@@ -256,8 +256,10 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
     A = make.affinity(W,nn)
     d <- apply(A, 1, sum)
     L <- diag(d)-A                        # unnormalized version
+    #bottleneck
     L <- diag(d^-0.5)%*%L%*% diag(d^-0.5) # normalized version
     evL <- eigen(L,symmetric=TRUE)  # evL$values is decreasing sorted when symmetric=TRUE
+    #bottleneck
     Z <- evL$vectors[,(ncol(evL$vectors)-k+1):ncol(evL$vectors)]
     spc <- pam(Z,k)
     colorSpectralTom <- labels2colors(spc$cluster)
@@ -404,6 +406,55 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
             break
     }
 }
+
+#' Modules detection by each condition
+#' 
+#' Module detection on each condition-specific network, which is constructed from
+#' all samples but samples belonging to that condition
+#'
+#' @param datExpr gene expression profile, rows are samples and columns genes, 
+#' rowname should contain condition specifier
+#' @param conditionNames character vector, each as the condition name
+#' @param ResultFolder where to store the clusters
+#' @param GeneNames normally the gene official names to replace the colnames of datExpr
+#' 
+#' @return a numeric vector, each entry is the number of modules in condition-specific network
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @keywords multiplecondition
+#' 
+#' @export
+#' 
+MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames){
+    intconditionModules <- numeric(length = length(conditionNames))
+    for (i in 1:length(conditionNames)) {
+        # user can specify rows to remove each time here according to the data itself
+        removeid <- c()
+        for (j in 1:length(rownames(datExpr))){
+            if(grepl(conditionNames[i],rownames(datExpr)[j]))
+                removeid <- union(removeid,j)
+        }
+        
+        # datExprsConditionRemoved is the rest data without a specific stage
+        datExprsConditionRemoved <- datExpr[-removeid,]
+        ids <- which(duplicated(t(datExprsConditionRemoved))==TRUE)
+        if(length(ids) > 0)
+            datExprsConditionRemoved <- datExprsConditionRemoved[,-ids]
+        
+        #clean genes that have identical values across all the samples, 
+        #which makes standard deviation zero, leading NAs in correlation matrix
+        colSD <- apply(datExprsConditionRemoved, 2, sd)
+        ids <- which(colSD==0)
+        if(length(ids) > 0)
+            datExprsConditionRemoved <- datExprsConditionRemoved[,-ids]
+        #intconditionModules[i] = WeightedModulePartitionHierarchical(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
+        #intconditionModules[i] = WeightedModulePartitionDensity(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
+        intconditionModules[i] <- WeightedModulePartitionLouvain(datExprsConditionRemoved,ResultFolder,conditionNames[i],
+                                                                 GeneNames,maxsize=200, minsize=30,power=pwd,tao=0.2)
+    }
+    intconditionModules
+}
+
 
 #' Illustration of two networks comparison
 #' 
