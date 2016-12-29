@@ -599,7 +599,9 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
 #' @param ResultFolder where to store results
 #' @param intModules how many modules in the background network
 #' @param indicator identifier of current profile, served as a tag in name
-#' @param conditionNames a character vector, each of them is the name 
+#' @param conditionNames a character vector, each of them is the name
+#' @param legendNames a character vector, each of them is the condition name 
+#' showing up in the frequency barplot 
 #' of condition. Or just single name
 #' @return None
 #' 
@@ -615,7 +617,8 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
 #' 
 #' @export
 #' 
-ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
+ModuleFrequency <- function(ResultFolder,intModules, conditionNames, 
+                            legendNames, indicator){
     Ncon <- length(conditionNames)
     wide <- matrix (0,nrow = Ncon, ncol = intModules)
     for (i in 1:Ncon) {
@@ -629,6 +632,9 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
     # sequential <- brewer.pal(length(conditionNames), col=c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green'))
     # sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
     sequential <- brewer.pal(Ncon, "Set1")
+    qual_col_pals <- brewer.pal.info[brewer.pal.info$category == 'qual',]
+    col_vector <- unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+    # sequential <- sample(col_vector, Ncon)
     pdf(paste(ResultFolder,'/specificmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
     barplot(wide,
@@ -640,8 +646,8 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
             xlim = c(0,intModules+1), # these two lines allow space for the legend
             main = 'Frequency of condition specific module',
             width = 0.75) # these two lines allow space for the legend
-    legend("topright", 
-           legend = conditionNames, #in order from top to bottom
+    legend("topleft", 
+           legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
            title = "conditons",cex = 0.75)
     dev.off()
@@ -679,6 +685,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
     }
     #sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
     sequential <- brewer.pal(Ncon, "Set1")
+    #sequential <- sample(col_vector, Ncon)
     pdf(paste(ResultFolder,'/conservedmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
     barplot(wide,
@@ -690,14 +697,13 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames, indicator){
             xlim = c(0,intModules+1), # these two lines allow space for the legend
             main = 'Frequency of conserved module',
             width = 0.75) # these two lines allow space for the legend
-    legend("topright", 
-           legend =conditionNames, #in order from top to bottom
+    legend("topleft", 
+           legend =legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
            title = "conditons",cex = 0.75)
     dev.off()
     
     idx2 <- which(colSums(wide)!=0)
-    #write(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),append = FALSE)
     write.table(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),
                 row.names = FALSE, col.names = FALSE)
     dir.create(paste(ResultFolder,'/','interestedModules',sep=''))
