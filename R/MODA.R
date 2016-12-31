@@ -623,9 +623,10 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     wide <- matrix (0,nrow = Ncon, ncol = intModules)
     for (i in 1:Ncon) {
         fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
-        tad <- read.table(paste(fileprefix,'sepcificModuleid.txt',sep=''),header = TRUE, sep = "")
-        moduleid <-tad[,1]
-        wide[i,moduleid] <- 1
+        #tad <- read.table(paste(fileprefix,'sepcificModuleid.txt',sep=''),header = TRUE, sep = "")
+        tad <- as.numeric(readLines(paste(fileprefix,'sepcificModuleid.txt',sep='')))
+        #moduleid <-tad[,1]
+        wide[i,tad] <- 1
     }
     
     # sequential <- brewer.pal(length(conditionNames), "Greens")
@@ -676,19 +677,21 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     }
     idx1 <- which(colSums(wide)!=0)
     
-    wide <- matrix (0,nrow = Ncon, ncol = intModules)
+    wide2 <- matrix (0,nrow = Ncon, ncol = intModules)
     for (i in 1:length(conditionNames)) {
         fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
-        tad <- read.table(paste(fileprefix,'conservedModuleid.txt',sep=''),header = TRUE, sep = "")
-        moduleid <- tad[,1]
-        wide[i,moduleid] <- 1
+        #tad <- read.table(paste(fileprefix,'conservedModuleid.txt',sep=''),header = TRUE, sep = "")
+        #moduleid <- tad[,1]
+        tad <- as.numeric(readLines(paste(fileprefix,'conservedModuleid.txt',sep='')))
+        wide2[i,tad] <- 1
+        #wide2[i,moduleid] <- 1
     }
     #sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
     sequential <- brewer.pal(Ncon, "Set1")
     #sequential <- sample(col_vector, Ncon)
     pdf(paste(ResultFolder,'/conservedmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
-    barplot(wide,
+    barplot(wide2,
             names.arg = 1:intModules,
             cex.names = 0.7, # makes x-axis labels small enough to show all
             col = sequential, # colors
@@ -703,7 +706,28 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
            title = "conditons",cex = 0.75)
     dev.off()
     
-    idx2 <- which(colSums(wide)!=0)
+    pdf(paste(ResultFolder,'/membership.pdf',sep=''),width = 10, height = 5)
+    plot(1:intModules,xaxt = "n",
+         xlim = c(1,intModules),ylim = c(-max(colSums(wide2)),max(colSums(wide))),type = "n",
+         xlab='Module ID',ylab='Membership',main = 'Specification of conditon-specifci and conserved module')
+    #axis(1, at = seq(1, intModules, by = 1), labels=1:intModules)
+    barplot(wide,
+            names.arg = 1:intModules,
+            cex.names = 0.7, # makes x-axis labels small enough to show all
+            col = sequential, # colors
+            width = 0.75,add = TRUE) # these two lines allow space for the legend
+    barplot(-wide2,
+            col = sequential, # colors
+            width = 0.75,add = TRUE)
+    legend("topleft", 
+           legend = legendNames, #in order from top to bottom
+           fill = sequential, # 6:1 reorders so legend order matches graph
+           title = "conditons",cex = 0.75)
+    text(intModules-1, 2, 'Conditon specific')
+    text(intModules-1, -2, 'Conserved')
+    dev.off()
+    
+    idx2 <- which(colSums(wide2)!=0)
     write.table(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),
                 row.names = FALSE, col.names = FALSE)
     dir.create(paste(ResultFolder,'/','interestedModules',sep=''))
