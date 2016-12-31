@@ -46,7 +46,7 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain'),
                 #large modules, in recursive way
                 ids = which(memfc==i)
                 g2 <- induced.subgraph(graph=g,vids=ids)
-                recursiveigraph(g2,savefile,method)
+                recursiveigraph(g2,savefile,method,maxsize,minsize)
             } else {
                 next
             }
