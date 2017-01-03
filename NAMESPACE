@@ -3,6 +3,7 @@
 export(CompareAllNets)
 export(MIcondition)
 export(ModuleFrequency)
+export(NMImatrix)
 export(PartitionDensity)
 export(PartitionModularity)
 export(WeightedModulePartitionAmoutain)

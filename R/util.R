@@ -86,6 +86,8 @@ modulesRank <- function(foldername,indicator,GeneNames){
         #            quote = FALSE, row.names = FALSE, col.names = FALSE)
         write.table(GeneNames[ap],file = paste(foldername,'/DenseModuleGene_',indicator,'_',i,'.txt',sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
+        write.table(ap,file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+                    quote = FALSE, row.names = FALSE, col.names = FALSE)
     }
     length(rlines)
 }

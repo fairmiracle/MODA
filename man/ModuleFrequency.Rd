@@ -4,14 +4,18 @@
 \alias{ModuleFrequency}
 \title{Statistics of all conditions}
 \usage{
-ModuleFrequency(ResultFolder, intModules, conditionNames, indicator)
+ModuleFrequency(ResultFolder, intModules, conditionNames, legendNames,
+  indicator)
 }
 \arguments{
 \item{ResultFolder}{where to store results}
 
 \item{intModules}{how many modules in the background network}
 
-\item{conditionNames}{a character vector, each of them is the name 
+\item{conditionNames}{a character vector, each of them is the name}
+
+\item{legendNames}{a character vector, each of them is the condition name 
+showing up in the frequency barplot 
 of condition. Or just single name}
 
 \item{indicator}{identifier of current profile, served as a tag in name}

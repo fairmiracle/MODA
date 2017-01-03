@@ -590,6 +590,86 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
     }
 }
 
+#' Illustration of network comparison by NMI
+#' 
+#' Compare the background network and a set of condition-specific network. 
+#' returning a pair-wise matrix to show the normalized mutual information between
+#' each pair of networks in terms of partitioning
+#'
+#' @param ResultFolder where to store results
+#' @param intModules how many modules in the background network
+#' @param indicator identifier of current profile, served as a tag in name
+#' @param intconditionModules a numeric vector, each of them is the number 
+#' of modules in each condition-specific network. Or just single number
+#' @param conditionNames a character vector, each of them is the name 
+#' of condition. Or just single name
+#' @param legendNames a character vector, each of them is the condition name 
+#' showing up in the similarity matrix plot if applicable
+#' @param plt a boolean value to indicate whether plot the similarity matrix
+#'
+#' @return NMI matrix indicating the similarity between each two networks
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @seealso \code{\link{CompareAllNets}}
+#' @keywords module differential NMI
+#' 
+#' @export
+#' 
+NMImatrix <- function(ResultFolder,intModules1,indicator,intconditionModules,
+                      conditionNames, legendNames=NULL, plt=FALSE){
+    Ncon <- length(conditionNames)
+    matnmi <- matrix(0, nrow = Ncon+1,ncol = Ncon+1)
+    diag(matnmi) <- 1
+    sourcehead <- paste(ResultFolder,'/DenseModuleGeneID_',sep='')
+    comm <- numeric(length=N)
+    
+    for(i1 in 1:intModules1){
+        densegenefile1 <- paste(sourcehead,indicator,"_",i1,".txt",sep="")
+        list1 <- readLines(densegenefile1)
+        comm[as.numeric(list1)] <- i1
+    }
+    
+    for(i in 1:Ncon){
+        tmpcomm <- numeric(length=N)
+        for(i1 in 1:intconditionModules[i]){
+            densegenefile1 <- paste(sourcehead,conditionNames[i],"_",i1,".txt",sep="")
+            list1 <- readLines(densegenefile1)
+            tmpcomm[as.numeric(list1)] <- i1
+        }
+        matnmi[1,i+1] <- compare(comm, tmpcomm,"nmi")
+        matnmi[i+1,1] <- matnmi[1,i+1]
+        assign(paste('comm', i, sep=''), tmpcomm)
+    }
+    
+    for(i in 1:(Ncon-1)){
+        for (j in (i+1):Ncon) {
+            matnmi[i+1,j+1] <- compare(get(paste('comm', i, sep='')), 
+                                       get(paste('comm', j, sep='')),"nmi")
+            matnmi[j+1,i+1] <- matnmi[i+1,j+1]
+        }
+    }
+    if(plt){
+        textMatrix =  paste(signif(matnmi))
+        pdf(file = "NMIsimilarity.pdf", wi = 10, he = 7);
+        par(mar = c(6, 8.8, 3, 2.2));
+        labeledHeatmap(Matrix = matnmi,
+                       xLabels = c(indicator,legendNames),
+                       yLabels = c(indicator,legendNames),
+                       ySymbols = c(indicator,legendNames),
+                       colorLabels = FALSE,
+                       colors = blueWhiteRed(50),
+                       textMatrix = textMatrix,
+                       setStdMargins = FALSE,
+                       cex.text = 0.5,
+                       zlim = c(-1,1),
+                       cex.lab.x = 0.75,
+                       cex.lab.y = 0.75,
+                       main = "Network similarities by NMI")
+        dev.off()
+    }
+    return(matnmi)
+}
+
 #' Statistics of all conditions
 #' 
 #' Statistics of all conditions. To highlight conserved or condition-specific 
@@ -723,8 +803,8 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
            legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
            title = "conditons",cex = 0.75)
-    text(intModules-1, 2, 'Conditon specific')
-    text(intModules-1, -2, 'Conserved')
+    text(intModules-1, 2, 'Conditon specific',cex = 0.75)
+    text(intModules-1, -2, 'Conserved',cex = 0.75)
     dev.off()
     
     idx2 <- which(colSums(wide2)!=0)
