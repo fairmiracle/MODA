@@ -4,7 +4,8 @@
 \alias{MIcondition}
 \title{Modules detection by each condition}
 \usage{
-MIcondition(datExpr, conditionNames, ResultFolder, GeneNames)
+MIcondition(datExpr, conditionNames, ResultFolder, GeneNames, maxsize = 100,
+  minsize = 30)
 }
 \arguments{
 \item{datExpr}{gene expression profile, rows are samples and columns genes, 

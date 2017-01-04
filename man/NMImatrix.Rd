@@ -5,7 +5,7 @@
 \title{Illustration of network comparison by NMI}
 \usage{
 NMImatrix(ResultFolder, intModules1, indicator, intconditionModules,
-  conditionNames, legendNames = NULL, plt = FALSE)
+  conditionNames, Nsize, legendNames = NULL, plt = FALSE)
 }
 \arguments{
 \item{ResultFolder}{where to store results}
@@ -17,6 +17,8 @@ of modules in each condition-specific network. Or just single number}
 
 \item{conditionNames}{a character vector, each of them is the name 
 of condition. Or just single name}
+
+\item{Nsize}{The number of genes in total}
 
 \item{legendNames}{a character vector, each of them is the condition name 
 showing up in the similarity matrix plot if applicable}

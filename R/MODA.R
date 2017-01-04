@@ -425,7 +425,7 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
 #' 
 #' @export
 #' 
-MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames){
+MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames,maxsize=100, minsize=30){
     intconditionModules <- numeric(length = length(conditionNames))
     for (i in 1:length(conditionNames)) {
         # user can specify rows to remove each time here according to the data itself
@@ -450,7 +450,7 @@ MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames){
         #intconditionModules[i] = WeightedModulePartitionHierarchical(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
         #intconditionModules[i] = WeightedModulePartitionDensity(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
         intconditionModules[i] <- WeightedModulePartitionLouvain(datExprsConditionRemoved,ResultFolder,conditionNames[i],
-                                                                 GeneNames,maxsize=200, minsize=30,power=pwd,tao=0.2)
+                                                                 GeneNames,maxsize=maxsize, minsize=minsize,power=pwd,tao=0.2)
     }
     intconditionModules
 }
@@ -603,6 +603,7 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
 #' of modules in each condition-specific network. Or just single number
 #' @param conditionNames a character vector, each of them is the name 
 #' of condition. Or just single name
+#' @param Nsize The number of genes in total
 #' @param legendNames a character vector, each of them is the condition name 
 #' showing up in the similarity matrix plot if applicable
 #' @param plt a boolean value to indicate whether plot the similarity matrix
@@ -616,12 +617,12 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
 #' @export
 #' 
 NMImatrix <- function(ResultFolder,intModules1,indicator,intconditionModules,
-                      conditionNames, legendNames=NULL, plt=FALSE){
+                      conditionNames, Nsize, legendNames=NULL, plt=FALSE){
     Ncon <- length(conditionNames)
     matnmi <- matrix(0, nrow = Ncon+1,ncol = Ncon+1)
-    diag(matnmi) <- 1
+    
     sourcehead <- paste(ResultFolder,'/DenseModuleGeneID_',sep='')
-    comm <- numeric(length=N)
+    comm <- numeric(length=Nsize)
     
     for(i1 in 1:intModules1){
         densegenefile1 <- paste(sourcehead,indicator,"_",i1,".txt",sep="")
@@ -630,7 +631,7 @@ NMImatrix <- function(ResultFolder,intModules1,indicator,intconditionModules,
     }
     
     for(i in 1:Ncon){
-        tmpcomm <- numeric(length=N)
+        tmpcomm <- numeric(length=Nsize)
         for(i1 in 1:intconditionModules[i]){
             densegenefile1 <- paste(sourcehead,conditionNames[i],"_",i1,".txt",sep="")
             list1 <- readLines(densegenefile1)
@@ -648,9 +649,11 @@ NMImatrix <- function(ResultFolder,intModules1,indicator,intconditionModules,
             matnmi[j+1,i+1] <- matnmi[i+1,j+1]
         }
     }
+    # range01 <- function(x){(x-min(x[x > 0]))/(max(x)-min(x[x > 0]))}
+    diag(matnmi) <- 1
     if(plt){
         textMatrix =  paste(signif(matnmi))
-        pdf(file = "NMIsimilarity.pdf", wi = 10, he = 7);
+        pdf(file = paste(ResultFolder,"/NMIsimilarity.pdf",sep=''), wi = 10, he = 7);
         par(mar = c(6, 8.8, 3, 2.2));
         labeledHeatmap(Matrix = matnmi,
                        xLabels = c(indicator,legendNames),
