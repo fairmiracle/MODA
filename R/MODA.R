@@ -319,8 +319,14 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
     dir.create(foldername, showWarnings = FALSE)
     tmfile <- paste(foldername,'tmp.txt',sep='')
     recursiveigraph(g,tmfile,'louvain',maxsize, minsize)
-    num <- modulesRank(foldername,indicatename,GeneNames)
-    num
+    if(!file.exists(tmfile)){
+        print('Not suitable for Louvain! Try another module identification method')
+        return (0)
+    }else
+    {
+        num <- modulesRank(foldername,indicatename,GeneNames)
+        return (num)
+    }
 }
 
 #' Modules detection by AMOUNTAIN algorithm
@@ -715,10 +721,14 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     # sequential <- brewer.pal(length(conditionNames), "Greens")
     # sequential <- brewer.pal(length(conditionNames), col=c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green'))
     # sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
-    sequential <- brewer.pal(Ncon, "Set1")
+    
+    if (Ncon > 9){
     qual_col_pals <- brewer.pal.info[brewer.pal.info$category == 'qual',]
     col_vector <- unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-    # sequential <- sample(col_vector, Ncon)
+    sequential <- sample(col_vector, Ncon)
+    } else
+        sequential <- brewer.pal(Ncon, "Set1")
+    
     pdf(paste(ResultFolder,'/specificmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
     barplot(wide,
@@ -770,7 +780,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
         #wide2[i,moduleid] <- 1
     }
     #sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
-    sequential <- brewer.pal(Ncon, "Set1")
+    #sequential <- brewer.pal(Ncon, "Set1")
     #sequential <- sample(col_vector, Ncon)
     pdf(paste(ResultFolder,'/conservedmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
