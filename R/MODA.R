@@ -743,7 +743,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     legend("topleft", 
            legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
-           title = "conditons",cex = 0.75)
+           title = "conditions",cex = 0.75)
     dev.off()
     
     for (ispec in 1:Ncon) {
@@ -796,7 +796,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     legend("topleft", 
            legend =legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
-           title = "conditons",cex = 0.75)
+           title = "conditions",cex = 0.75)
     dev.off()
     
     pdf(paste(ResultFolder,'/membership.pdf',sep=''),width = 10, height = 5)
@@ -815,7 +815,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     legend("topleft", 
            legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
-           title = "conditons",cex = 0.75)
+           title = "conditions",cex = 0.75)
     text(intModules-1, 2, 'Conditon specific',cex = 0.75)
     text(intModules-1, -2, 'Conserved',cex = 0.75)
     dev.off()
