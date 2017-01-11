@@ -561,8 +561,8 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
                           conservedTheta){
     for (i in 1:length(conditionNames)) {
         ArrayGroup1 <- comparemodulestwonets(ResultFolder,intModules,
-                    intconditionModules[i],paste('/DenseModuleGene_',
-                        indicator,sep=''),paste('/DenseModuleGene_',
+                    intconditionModules[i],paste('/DenseModuleGeneID_',
+                        indicator,sep=''),paste('/DenseModuleGeneID_',
                     conditionNames[i],sep=''))
         dir.create(paste(ResultFolder,'/',conditionNames[i],sep=''), showWarnings = FALSE)
         fileprefix <- paste(ResultFolder,'/',conditionNames[i],'/',sep='')
