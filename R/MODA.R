@@ -204,6 +204,8 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
         DenseGenes = colnames(datExpr)[idx]
         densegenefile <- paste(foldername,"/DenseModuleGene_",
                                indicatename,"_",J,".txt",sep="")
+        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+                    quote = FALSE, row.names = FALSE, col.names = FALSE)
         write.table(DenseGenes,densegenefile,sep = "\n",col.names = FALSE,
                     row.names = FALSE,quote = FALSE)
     }
@@ -269,6 +271,8 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
         DenseGenes = GeneNames[idx]
         densegenefile <- paste(foldername,"/DenseModuleGene_",
                                indicatename,"_",J,".txt",sep="")
+        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+                    quote = FALSE, row.names = FALSE, col.names = FALSE)
         write.table(DenseGenes,densegenefile,sep = "\n",col.names = FALSE,
                     row.names = FALSE,quote = FALSE)
     }                                    
@@ -372,6 +376,7 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
     z <- rep(0,N)
     idx <- 1
     dir.create(foldername, showWarnings = FALSE)
+    idxname <- 1:N
     saveAtomfile <- paste(foldername,'/AtomModule',sep='')
     for (ii in 1:Nmodule) {
         abegin = 0.01
@@ -391,6 +396,10 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
         
         if(length(predictedid) <= maxsize){
             modulescore = sum(W[predictedid,predictedid])
+            
+            write.table(idxname[predictedid],file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+                        quote = FALSE, row.names = FALSE, col.names = FALSE)
+            
             write.table(GeneNames[predictedid],file = paste(foldername,'/',
                         floor(modulescore),'-moduleid-',idx,'.txt',sep=''),
                         quote = FALSE, row.names = FALSE, col.names = FALSE)
@@ -405,6 +414,7 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
         W = W[-predictedid,-predictedid]
         GeneNames = GeneNames[-predictedid]
         z = z[-predictedid]
+        idxname = idxname[-predictedid]
         N = length(GeneNames)
         print(paste('Finishing module ',ii,sep=''))
         
