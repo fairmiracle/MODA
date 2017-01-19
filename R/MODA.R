@@ -463,6 +463,7 @@ MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames,maxsize=10
         ids <- which(colSD==0)
         if(length(ids) > 0)
             datExprsConditionRemoved <- datExprsConditionRemoved[,-ids]
+        
         #intconditionModules[i] = WeightedModulePartitionHierarchical(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
         #intconditionModules[i] = WeightedModulePartitionDensity(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
         intconditionModules[i] <- WeightedModulePartitionLouvain(datExprsConditionRemoved,ResultFolder,conditionNames[i],

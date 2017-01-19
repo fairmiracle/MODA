@@ -160,3 +160,12 @@ forTotalcompletegraph <- function(predictedid,modulescoreW,savefile1){
         write(paste(mscore,cp,sep=''),file = savefile1,append = TRUE)
     }
 }
+countintconditionModules <- function(conditionNames,ResultFolder){
+    intconditionModules <- numeric(length = length(conditionNames))
+    fileNames <- list.files(ResultFolder)
+    for(i in 1:length(conditionNames)){
+        intconditionModules[i] <- length(which(grepl(paste('DenseModuleGene_',conditionNames[i],'_',sep=''),
+                                                     fileNames)==TRUE))
+    }
+    intconditionModules
+}
