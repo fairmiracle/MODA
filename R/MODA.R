@@ -790,6 +790,8 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
         wide2[i,tad] <- 1
         #wide2[i,moduleid] <- 1
     }
+    idx2 <- which(colSums(wide2)!=0)
+    
     #sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
     #sequential <- brewer.pal(Ncon, "Set1")
     #sequential <- sample(col_vector, Ncon)
@@ -811,27 +813,27 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     dev.off()
     
     pdf(paste(ResultFolder,'/membership.pdf',sep=''),width = 10, height = 5)
-    plot(1:intModules,xaxt = "n",
+    plot(1:intModules,xaxt = "n",yaxt = "n",
          xlim = c(1,intModules),ylim = c(-max(colSums(wide2)),max(colSums(wide))),type = "n",
-         xlab='Module ID',ylab='Membership',main = 'Specification of conditon-specifci and conserved module')
+         xlab='Module ID',ylab='Membership',main = 'Specification of conditon-specific and conserved module')
     #axis(1, at = seq(1, intModules, by = 1), labels=1:intModules)
-    barplot(wide,
+    bp <- barplot(wide,axes=F,
             names.arg = 1:intModules,
             cex.names = 0.7, # makes x-axis labels small enough to show all
             col = sequential, # colors
-            width = 0.75,add = TRUE) # these two lines allow space for the legend
-    barplot(-wide2,
+            width = 0.75,
+            add = TRUE) # these two lines allow space for the legend
+    barplot(-wide2,axes=F,
             col = sequential, # colors
             width = 0.75,add = TRUE)
     legend("topleft", 
            legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
            title = "conditions",cex = 0.75)
-    text(intModules-1, 2, 'Conditon specific',cex = 0.75)
-    text(intModules-1, -2, 'Conserved',cex = 0.75)
+    text(intModules-1, 1, 'Conditon specific',cex = 0.75)
+    text(intModules-1, -1, 'Conserved',cex = 0.75)
     dev.off()
     
-    idx2 <- which(colSums(wide2)!=0)
     write.table(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),
                 row.names = FALSE, col.names = FALSE)
     dir.create(paste(ResultFolder,'/','interestedModules',sep=''))
