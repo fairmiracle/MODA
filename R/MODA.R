@@ -728,7 +728,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
         #moduleid <-tad[,1]
         wide[i,tad] <- 1
     }
-    
+    idx1 <- which(colSums(wide)!=0)
     # sequential <- brewer.pal(length(conditionNames), "Greens")
     # sequential <- brewer.pal(length(conditionNames), col=c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green'))
     # sequential <- c('black', 'white', 'blue', 'red', 'yellow', 'purple', 'green')
@@ -742,13 +742,13 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     
     pdf(paste(ResultFolder,'/specificmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
-    barplot(wide,
-            names.arg = 1:intModules,
+    barplot(wide[,idx1],
+            names.arg = idx1,
             cex.names = 0.7, # makes x-axis labels small enough to show all
             col = sequential, # colors
             xlab = "module id",
             ylab = "if in condition specific network",
-            xlim = c(0,intModules+1), # these two lines allow space for the legend
+            xlim = c(0,length(idx1)), # these two lines allow space for the legend
             main = 'Frequency of condition specific module',
             width = 0.75) # these two lines allow space for the legend
     legend("topleft", 
@@ -779,7 +779,6 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
             write('\n',file = paste(ResultFolder,'/specificmembership.txt',sep=''),append=TRUE)
         }
     }
-    idx1 <- which(colSums(wide)!=0)
     
     wide2 <- matrix (0,nrow = Ncon, ncol = intModules)
     for (i in 1:length(conditionNames)) {
@@ -797,13 +796,13 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     #sequential <- sample(col_vector, Ncon)
     pdf(paste(ResultFolder,'/conservedmembership.pdf',sep=''),width = 10, height = 5)
     #  png('specificmembership.png',width = 1000, height = 500)
-    barplot(wide2,
-            names.arg = 1:intModules,
+    barplot(wide2[,idx2],
+            names.arg = idx2,
             cex.names = 0.7, # makes x-axis labels small enough to show all
             col = sequential, # colors
             xlab = "module id",
             ylab = "if in condition specific network",
-            xlim = c(0,intModules+1), # these two lines allow space for the legend
+            xlim = c(0,length(idx2)), # these two lines allow space for the legend
             main = 'Frequency of conserved module',
             width = 0.75) # these two lines allow space for the legend
     legend("topleft", 
@@ -812,26 +811,28 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
            title = "conditions",cex = 0.75)
     dev.off()
     
+    idx <- sort(union(idx1,idx2))
     pdf(paste(ResultFolder,'/membership.pdf',sep=''),width = 10, height = 5)
-    plot(1:intModules,xaxt = "n",yaxt = "n",
-         xlim = c(1,intModules),ylim = c(-max(colSums(wide2)),max(colSums(wide))),type = "n",
+    plot(1:length(idx),xaxt = "n",yaxt = "n",
+         xlim = c(1,length(idx)),ylim = c(-max(colSums(wide2)),max(colSums(wide))),type = "n",
          xlab='Module ID',ylab='Membership',main = 'Specification of conditon-specific and conserved module')
     #axis(1, at = seq(1, intModules, by = 1), labels=1:intModules)
-    bp <- barplot(wide,axes=F,
-            names.arg = 1:intModules,
-            cex.names = 0.7, # makes x-axis labels small enough to show all
-            col = sequential, # colors
-            width = 0.75,
-            add = TRUE) # these two lines allow space for the legend
-    barplot(-wide2,axes=F,
+    
+    bp <- barplot(wide[,idx],axes=F,
+                  names.arg = idx,
+                  cex.names = 0.7, # makes x-axis labels small enough to show all
+                  col = sequential, # colors
+                  width = 0.75,
+                  add = TRUE) # these two lines allow space for the legend
+    barplot(-wide2[,idx],axes=F,
             col = sequential, # colors
             width = 0.75,add = TRUE)
-    legend("topleft", 
+    legend("bottomleft", 
            legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
-           title = "conditions",cex = 0.75)
-    text(intModules-1, 1, 'Conditon specific',cex = 0.75)
-    text(intModules-1, -1, 'Conserved',cex = 0.75)
+           cex = 0.75)
+    text(length(idx)-1, 1, 'Conditon specific',cex = 0.75)
+    text(length(idx)-1, -1, 'Conserved',cex = 0.75)
     dev.off()
     
     write.table(idx2,file = paste(ResultFolder,'/conservedmembership.txt',sep=''),
