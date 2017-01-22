@@ -169,3 +169,22 @@ countintconditionModules <- function(conditionNames,ResultFolder){
     }
     intconditionModules
 }
+
+# see which module contains DE
+HitGenes <- function(degenelist,interesFolder){
+    allgenes <-c()
+    fileNames <- list.files(interesFolder)
+    hitfrequency <- numeric(length=length(fileNames)/3) #DE in module
+    uniquenumincharactervector <- unique(gsub("\\D", "", fileNames))
+    names(hitfrequency) <- as.character(sort(as.numeric(uniquenumincharactervector)))
+    for (fs in fileNames) {
+        if (!grepl('Symbol',fs) & !grepl('Entrezid',fs)& !grepl('blast2go',fs)){
+            ids <- readLines(paste(interesFolder,'/',fs,sep=''))
+            #if(goalGene %in% ids)
+            #print(fs)
+            hitfrequency[gsub("\\D", "", fs)] <- length(intersect(ids,degenelist))
+            allgenes <- c(allgenes,ids)
+        }
+    }
+    return (hitfrequency)
+}

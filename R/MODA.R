@@ -584,7 +584,7 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
                   '.png',sep=''))
         plot(1:intModules,rowSums(ArrayGroup1),xlim = c(0,(intModules + 1)),
              ylim = c(0,max(rowSums(ArrayGroup1)) + 0.1),
-             xlab="Module ID",ylab = 'RowSums of jaccard matrix', 
+             xlab="Module ID",ylab = 'RowSums of similarity matrix', 
              type = 'n',main="Overlapped ratio")
         lines(1:intModules, rowSums(ArrayGroup1), col = 'black', type = "b")
         abline(h = min(rowSums(ArrayGroup1)) + 0.1, col='red')
