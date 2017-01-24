@@ -188,3 +188,20 @@ HitGenes <- function(degenelist,interesFolder){
     }
     return (hitfrequency)
 }
+
+# when you have 50k genes, requring package Matrix
+# from http://stackoverflow.com/questions/5888287/running-cor-or-any-variant-over-a-sparse-matrix-in-r
+sparse.cor <- function(x){
+    n <- nrow(x)
+    m <- ncol(x)
+    ii <- unique(x@i)+1 # rows with a non-zero element
+    
+    Ex <- colMeans(x)
+    nozero <- as.vector(x[ii,]) - rep(Ex,each=length(ii))        # colmeans
+    
+    covmat <- ( crossprod(matrix(nozero,ncol=m)) +
+                    crossprod(t(Ex))*(n-length(ii))
+    )/(n-1)
+    sdvec <- sqrt(diag(covmat))
+    covmat/crossprod(t(sdvec))
+}

@@ -317,6 +317,7 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
 WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneNames,
                                   maxsize=200, minsize=30, power=6, tao=0.2){
     ADJ <- abs(cor(datExpr,use="p"))^power
+    #ADJ <- sparse.cor(datExpr)^power
     ADJ[ADJ < tao] <- 0
     g <- graph_from_adjacency_matrix(ADJ,mode='undirected',weighted=TRUE)
     V(g)$name=1:length(V(g))
