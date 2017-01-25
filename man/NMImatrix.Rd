@@ -4,11 +4,13 @@
 \alias{NMImatrix}
 \title{Illustration of network comparison by NMI}
 \usage{
-NMImatrix(ResultFolder, intModules1, indicator, intconditionModules,
+NMImatrix(ResultFolder, intModules, indicator, intconditionModules,
   conditionNames, Nsize, legendNames = NULL, plt = FALSE)
 }
 \arguments{
 \item{ResultFolder}{where to store results}
+
+\item{intModules}{how many modules in the background network}
 
 \item{indicator}{identifier of current profile, served as a tag in name}
 
@@ -24,8 +26,6 @@ of condition. Or just single name}
 showing up in the similarity matrix plot if applicable}
 
 \item{plt}{a boolean value to indicate whether plot the similarity matrix}
-
-\item{intModules}{how many modules in the background network}
 }
 \value{
 NMI matrix indicating the similarity between each two networks

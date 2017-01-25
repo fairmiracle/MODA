@@ -204,7 +204,7 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
         DenseGenes = colnames(datExpr)[idx]
         densegenefile <- paste(foldername,"/DenseModuleGene_",
                                indicatename,"_",J,".txt",sep="")
-        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicatename,'_',i,'.txt',sep=''),
+        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicatename,'_',J,'.txt',sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
         write.table(DenseGenes,densegenefile,sep = "\n",col.names = FALSE,
                     row.names = FALSE,quote = FALSE)
@@ -636,7 +636,7 @@ CompareAllNets <- function(ResultFolder,intModules,indicator,
 #' 
 #' @export
 #' 
-NMImatrix <- function(ResultFolder,intModules1,indicator,intconditionModules,
+NMImatrix <- function(ResultFolder,intModules,indicator,intconditionModules,
                       conditionNames, Nsize, legendNames=NULL, plt=FALSE){
     Ncon <- length(conditionNames)
     matnmi <- matrix(0, nrow = Ncon+1,ncol = Ncon+1)
@@ -644,7 +644,7 @@ NMImatrix <- function(ResultFolder,intModules1,indicator,intconditionModules,
     sourcehead <- paste(ResultFolder,'/DenseModuleGeneID_',sep='')
     comm <- numeric(length=Nsize)
     
-    for(i1 in 1:intModules1){
+    for(i1 in 1:intModules){
         densegenefile1 <- paste(sourcehead,indicator,"_",i1,".txt",sep="")
         list1 <- readLines(densegenefile1)
         comm[as.numeric(list1)] <- i1
