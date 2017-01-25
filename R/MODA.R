@@ -204,7 +204,7 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
         DenseGenes = colnames(datExpr)[idx]
         densegenefile <- paste(foldername,"/DenseModuleGene_",
                                indicatename,"_",J,".txt",sep="")
-        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicatename,'_',i,'.txt',sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
         write.table(DenseGenes,densegenefile,sep = "\n",col.names = FALSE,
                     row.names = FALSE,quote = FALSE)
@@ -434,6 +434,8 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
 #' @param conditionNames character vector, each as the condition name
 #' @param ResultFolder where to store the clusters
 #' @param GeneNames normally the gene official names to replace the colnames of datExpr
+#' @param maxsize the maximal nodes allowed in one module
+#' @param minsize the minimal nodes allowed in one module
 #' 
 #' @return a numeric vector, each entry is the number of modules in condition-specific network
 #' 
@@ -810,6 +812,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
            legend =legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
            title = "conditions",cex = 0.75)
+           
     dev.off()
     
     idx <- sort(union(idx1,idx2))
@@ -831,7 +834,7 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
     legend("bottomleft", 
            legend = legendNames, #in order from top to bottom
            fill = sequential, # 6:1 reorders so legend order matches graph
-           cex = 0.75)
+           cex = 0.75,bty = "n")# without borders
     text(length(idx)-1, 1, 'Conditon specific',cex = 0.75)
     text(length(idx)-1, -1, 'Conserved',cex = 0.75)
     dev.off()

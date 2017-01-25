@@ -16,6 +16,10 @@ rowname should contain condition specifier}
 \item{ResultFolder}{where to store the clusters}
 
 \item{GeneNames}{normally the gene official names to replace the colnames of datExpr}
+
+\item{maxsize}{the maximal nodes allowed in one module}
+
+\item{minsize}{the minimal nodes allowed in one module}
 }
 \value{
 a numeric vector, each entry is the number of modules in condition-specific network
