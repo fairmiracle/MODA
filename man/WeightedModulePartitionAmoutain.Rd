@@ -4,8 +4,8 @@
 \alias{WeightedModulePartitionAmoutain}
 \title{Modules detection by AMOUNTAIN algorithm}
 \usage{
-WeightedModulePartitionAmoutain(datExpr, Nmodule, foldername, GeneNames,
-  maxsize = 200, minsize = 3, power = 6, tao = 0.2)
+WeightedModulePartitionAmoutain(datExpr, Nmodule, foldername, indicatename,
+  GeneNames, maxsize = 200, minsize = 3, power = 6, tao = 0.2)
 }
 \arguments{
 \item{datExpr}{gene expression profile, rows are samples and columns genes}
@@ -13,6 +13,8 @@ WeightedModulePartitionAmoutain(datExpr, Nmodule, foldername, GeneNames,
 \item{Nmodule}{the number of clusters(modules)}
 
 \item{foldername}{where to store the clusters}
+
+\item{indicatename}{normally a specific tag of condition}
 
 \item{GeneNames}{normally the gene official names to replace the colnames of datExpr}
 

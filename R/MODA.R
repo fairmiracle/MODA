@@ -340,9 +340,10 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' optimal module every time and use a modules extraction way
 #'
 #' @param datExpr gene expression profile, rows are samples and columns genes
-#' @param foldername where to store the clusters
-#' @param GeneNames normally the gene official names to replace the colnames of datExpr
 #' @param Nmodule the number of clusters(modules)
+#' @param foldername where to store the clusters
+#' @param indicatename normally a specific tag of condition
+#' @param GeneNames normally the gene official names to replace the colnames of datExpr
 #' @param maxsize the maximal nodes allowed in one module
 #' @param minsize the minimal nodes allowed in one module
 #' @param power the power parameter of WGCNA, W_{ij}=|cor(x_i,x_j)|^pwr
@@ -369,8 +370,8 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
-WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames,
-                                    maxsize=200, minsize=3, power=6, tao=0.2){
+WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,indicatename,
+                        GeneNames, maxsize=200, minsize=3, power=6, tao=0.2){
     W <- abs(cor(datExpr,use="p"))^power
     W[W < tao] <- 0
     N = dim(W)[1]
@@ -398,7 +399,8 @@ WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,GeneNames
         if(length(predictedid) <= maxsize){
             modulescore = sum(W[predictedid,predictedid])
             
-            write.table(idxname[predictedid],file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+            write.table(idxname[predictedid],file = paste(foldername,
+                    '/DenseModuleGeneID_',indicatename,'_',idx,'.txt',sep=''),
                         quote = FALSE, row.names = FALSE, col.names = FALSE)
             
             write.table(GeneNames[predictedid],file = paste(foldername,'/',
