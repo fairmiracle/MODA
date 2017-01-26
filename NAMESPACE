@@ -17,8 +17,3 @@ import(WGCNA)
 import(cluster)
 import(igraph)
 importFrom(dynamicTreeCut,cutreeDynamic)
-  importFrom("grDevices", "dev.off", "pdf", "png")
-  importFrom("graphics", "abline", "axis", "barplot", "layout", "legend",
-             "lines", "par", "plot", "text", "title")
-  importFrom("stats", "as.dist", "cutree", "hclust", "sd")
-  importFrom("utils", "write.table")
