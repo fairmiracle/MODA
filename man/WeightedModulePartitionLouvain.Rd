@@ -38,8 +38,8 @@ indicator <- 'X'     # indicator for data profile 1
 GeneNames <- colnames(datExpr1)
 intModules1 <- WeightedModulePartitionLouvain(datExpr1,ResultFolder,indicator,GeneNames)
 truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-mymodule <- getPartition(ResultFolder)
-randIndex(table(mymodule,truemodule),adjust=F)
+#mymodule <- getPartition(ResultFolder)
+#randIndex(table(mymodule,truemodule),adjust=F)
 }
 \author{
 Dong Li, \email{dxl466@cs.bham.ac.uk}

@@ -130,8 +130,8 @@ PartitionModularity <- function(ADJ, PartitionSet){
 #' conservedTheta = 0.1#threshold to define conserved modules
 #' intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 #' indicator1,CuttingCriterion) 
-#' mymodule <- getPartition(ResultFolder)
-#' randIndex(table(mymodule,truemodule),adjust=F)
+#' #mymodule <- getPartition(ResultFolder)
+#' #randIndex(table(mymodule,truemodule),adjust=F)
 
 #' @export
 #' 
@@ -245,8 +245,8 @@ WeightedModulePartitionHierarchical <- function(datExpr,foldername,indicatename,
 #' WeightedModulePartitionSpectral(datExpr1,ResultFolder,indicator,
 #' GeneNames,k=5)
 #' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-#' mymodule <- getPartition(ResultFolder)
-#' randIndex(table(mymodule,truemodule),adjust=F)
+#' #mymodule <- getPartition(ResultFolder)
+#' #randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
 WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename, 
@@ -310,8 +310,8 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
 #' GeneNames <- colnames(datExpr1)
 #' intModules1 <- WeightedModulePartitionLouvain(datExpr1,ResultFolder,indicator,GeneNames)
 #' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-#' mymodule <- getPartition(ResultFolder)
-#' randIndex(table(mymodule,truemodule),adjust=F)
+#' #mymodule <- getPartition(ResultFolder)
+#' #randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
 WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneNames,
@@ -366,8 +366,8 @@ WeightedModulePartitionLouvain <- function(datExpr,foldername,indicatename,GeneN
 #' intModules1 <- WeightedModulePartitionAmoutain(datExpr1,5,ResultFolder,'X',
 #' GeneNames,maxsize=100,minsize=50)
 #' truemodule <- c(rep(1,100),rep(2,100),rep(3,100),rep(4,100),rep(5,100))
-#' mymodule <- getPartition(ResultFolder)
-#' randIndex(table(mymodule,truemodule),adjust=F)
+#' #mymodule <- getPartition(ResultFolder)
+#' #randIndex(table(mymodule,truemodule),adjust=F)
 #' @export
 #' 
 WeightedModulePartitionAmoutain <- function(datExpr,Nmodule,foldername,indicatename,

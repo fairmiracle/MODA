@@ -37,8 +37,8 @@ specificTheta = 0.1 #threshold to define condition specific modules
 conservedTheta = 0.1#threshold to define conserved modules
 intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
 indicator1,CuttingCriterion) 
-mymodule <- getPartition(ResultFolder)
-randIndex(table(mymodule,truemodule),adjust=F)
+#mymodule <- getPartition(ResultFolder)
+#randIndex(table(mymodule,truemodule),adjust=F)
 }
 \author{
 Dong Li, \email{dxl466@cs.bham.ac.uk}
