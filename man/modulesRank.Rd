@@ -13,6 +13,9 @@ modulesRank(foldername, indicator, GeneNames)
 
 \item{GeneNames}{Gene symbols, sometimes we need them instead of probe ids}
 }
+\value{
+The numeber of modules
+}
 \description{
 Assign the module scores by weights, and rank them from highest to lowest
 }

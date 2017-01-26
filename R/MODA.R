@@ -689,13 +689,13 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
          xlab='Module ID',ylab='Membership',main = 'Specification of conditon-specific and conserved module')
     #axis(1, at = seq(1, intModules, by = 1), labels=1:intModules)
     
-    bp <- barplot(wide[,idx],axes=F,
+    bp <- barplot(wide[,idx],axes=FALSE,
                   names.arg = idx,
                   cex.names = 0.7, # makes x-axis labels small enough to show all
                   col = sequential, # colors
                   width = 0.75,
                   add = TRUE) # these two lines allow space for the legend
-    barplot(-wide2[,idx],axes=F,
+    barplot(-wide2[,idx],axes=FALSE,
             col = sequential, # colors
             width = 0.75,add = TRUE)
     legend("bottomleft", 

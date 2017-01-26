@@ -62,7 +62,7 @@ NMImatrix <- function(ResultFolder,intModules,indicator,intconditionModules,
     diag(matnmi) <- 1
     if(plt){
         textMatrix =  paste(signif(matnmi))
-        pdf(file = paste(ResultFolder,"/NMIsimilarity.pdf",sep=''), wi = 10, he = 7);
+        pdf(file = paste(ResultFolder,"/NMIsimilarity.pdf",sep=''), width = 10, height = 7);
         par(mar = c(6, 8.8, 3, 2.2));
         labeledHeatmap(Matrix = matnmi,
                        xLabels = c(indicator,legendNames),
@@ -142,7 +142,7 @@ MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames,maxsize=10
 #' @param method specify the community detection algorithm
 #' @param maxsize maximal module size
 #' @param minsize minimal module size
-#'
+#' @return None
 #' @references Blondel, Vincent D., et al. "Fast unfolding of communities in 
 #' large networks." Journal of statistical mechanics: theory and experiment 
 #' 2008.10 (2008): P10008.
@@ -200,6 +200,7 @@ recursiveigraph <- function(g, savefile, method = c('fastgreedy','louvain'),
 #' @param foldername folder used to save modules
 #' @param indicator normally a specific tag of condition
 #' @param GeneNames Gene symbols, sometimes we need them instead of probe ids
+#' @return The numeber of modules
 #' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
 #' @seealso \code{\link{recursiveigraph}}
 #' 

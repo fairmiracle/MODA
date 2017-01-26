@@ -18,6 +18,9 @@ recursiveigraph(g, savefile, method = c("fastgreedy", "louvain"),
 
 \item{minsize}{minimal module size}
 }
+\value{
+None
+}
 \description{
 Modules detection using igraph's community detection algorithms, when the
 resulted module is larger than expected, it is further devided by the same program
