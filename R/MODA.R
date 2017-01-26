@@ -271,7 +271,7 @@ WeightedModulePartitionSpectral <- function(datExpr, foldername, indicatename,
         DenseGenes = GeneNames[idx]
         densegenefile <- paste(foldername,"/DenseModuleGene_",
                                indicatename,"_",J,".txt",sep="")
-        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',i,'.txt',sep=''),
+        write.table(idx,file = paste(foldername,'/DenseModuleGeneID_',indicator,'_',J,'.txt',sep=''),
                     quote = FALSE, row.names = FALSE, col.names = FALSE)
         write.table(DenseGenes,densegenefile,sep = "\n",col.names = FALSE,
                     row.names = FALSE,quote = FALSE)
