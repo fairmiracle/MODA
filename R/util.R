@@ -1,5 +1,137 @@
 ##  utility
 
+#' Illustration of network comparison by NMI
+#' 
+#' Compare the background network and a set of condition-specific network. 
+#' returning a pair-wise matrix to show the normalized mutual information between
+#' each pair of networks in terms of partitioning
+#'
+#' @param ResultFolder where to store results
+#' @param intModules how many modules in the background network
+#' @param indicator identifier of current profile, served as a tag in name
+#' @param intconditionModules a numeric vector, each of them is the number 
+#' of modules in each condition-specific network. Or just single number
+#' @param conditionNames a character vector, each of them is the name 
+#' of condition. Or just single name
+#' @param Nsize The number of genes in total
+#' @param legendNames a character vector, each of them is the condition name 
+#' showing up in the similarity matrix plot if applicable
+#' @param plt a boolean value to indicate whether plot the similarity matrix
+#'
+#' @return NMI matrix indicating the similarity between each two networks
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @seealso \code{\link{CompareAllNets}}
+#' @keywords module differential NMI
+#' 
+#' 
+NMImatrix <- function(ResultFolder,intModules,indicator,intconditionModules,
+                      conditionNames, Nsize, legendNames=NULL, plt=FALSE){
+    Ncon <- length(conditionNames)
+    matnmi <- matrix(0, nrow = Ncon+1,ncol = Ncon+1)
+    
+    sourcehead <- paste(ResultFolder,'/DenseModuleGeneID_',sep='')
+    comm <- numeric(length=Nsize)
+    
+    for(i1 in 1:intModules){
+        densegenefile1 <- paste(sourcehead,indicator,"_",i1,".txt",sep="")
+        list1 <- readLines(densegenefile1)
+        comm[as.numeric(list1)] <- i1
+    }
+    
+    for(i in 1:Ncon){
+        tmpcomm <- numeric(length=Nsize)
+        for(i1 in 1:intconditionModules[i]){
+            densegenefile1 <- paste(sourcehead,conditionNames[i],"_",i1,".txt",sep="")
+            list1 <- readLines(densegenefile1)
+            tmpcomm[as.numeric(list1)] <- i1
+        }
+        matnmi[1,i+1] <- compare(comm, tmpcomm,"nmi")
+        matnmi[i+1,1] <- matnmi[1,i+1]
+        assign(paste('comm', i, sep=''), tmpcomm)
+    }
+    
+    for(i in 1:(Ncon-1)){
+        for (j in (i+1):Ncon) {
+            matnmi[i+1,j+1] <- compare(get(paste('comm', i, sep='')), 
+                                       get(paste('comm', j, sep='')),"nmi")
+            matnmi[j+1,i+1] <- matnmi[i+1,j+1]
+        }
+    }
+    # range01 <- function(x){(x-min(x[x > 0]))/(max(x)-min(x[x > 0]))}
+    diag(matnmi) <- 1
+    if(plt){
+        textMatrix =  paste(signif(matnmi))
+        pdf(file = paste(ResultFolder,"/NMIsimilarity.pdf",sep=''), wi = 10, he = 7);
+        par(mar = c(6, 8.8, 3, 2.2));
+        labeledHeatmap(Matrix = matnmi,
+                       xLabels = c(indicator,legendNames),
+                       yLabels = c(indicator,legendNames),
+                       ySymbols = c(indicator,legendNames),
+                       colorLabels = FALSE,
+                       colors = blueWhiteRed(50),
+                       textMatrix = textMatrix,
+                       setStdMargins = FALSE,
+                       cex.text = 0.5,
+                       zlim = c(-1,1),
+                       cex.lab.x = 0.75,
+                       cex.lab.y = 0.75,
+                       main = "Network similarities by NMI")
+        dev.off()
+    }
+    return(matnmi)
+}
+
+#' Modules detection by each condition
+#' 
+#' Module detection on each condition-specific network, which is constructed from
+#' all samples but samples belonging to that condition
+#'
+#' @param datExpr gene expression profile, rows are samples and columns genes, 
+#' rowname should contain condition specifier
+#' @param conditionNames character vector, each as the condition name
+#' @param ResultFolder where to store the clusters
+#' @param GeneNames normally the gene official names to replace the colnames of datExpr
+#' @param maxsize the maximal nodes allowed in one module
+#' @param minsize the minimal nodes allowed in one module
+#' 
+#' @return a numeric vector, each entry is the number of modules in condition-specific network
+#' 
+#' @author Dong Li, \email{dxl466@cs.bham.ac.uk}
+#' @keywords multiplecondition
+#' 
+#'
+MIcondition <- function(datExpr,conditionNames,ResultFolder,GeneNames,maxsize=100, minsize=30){
+    intconditionModules <- numeric(length = length(conditionNames))
+    for (i in 1:length(conditionNames)) {
+        # user can specify rows to remove each time here according to the data itself
+        removeid <- c()
+        for (j in 1:length(rownames(datExpr))){
+            if(grepl(conditionNames[i],rownames(datExpr)[j]))
+                removeid <- union(removeid,j)
+        }
+        
+        # datExprsConditionRemoved is the rest data without a specific stage
+        datExprsConditionRemoved <- datExpr[-removeid,]
+        ids <- which(duplicated(t(datExprsConditionRemoved))==TRUE)
+        if(length(ids) > 0)
+            datExprsConditionRemoved <- datExprsConditionRemoved[,-ids]
+        
+        #clean genes that have identical values across all the samples, 
+        #which makes standard deviation zero, leading NAs in correlation matrix
+        colSD <- apply(datExprsConditionRemoved, 2, sd)
+        ids <- which(colSD==0)
+        if(length(ids) > 0)
+            datExprsConditionRemoved <- datExprsConditionRemoved[,-ids]
+        
+        #intconditionModules[i] = WeightedModulePartitionHierarchical(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
+        #intconditionModules[i] = WeightedModulePartitionDensity(datExprsConditionRemoved,ResultFolder,conditionNames[i],CuttingCriterion)
+        intconditionModules[i] <- WeightedModulePartitionLouvain(datExprsConditionRemoved,ResultFolder,conditionNames[i],
+                                                                 GeneNames,maxsize=maxsize, minsize=minsize,power=pwd,tao=0.2)
+    }
+    intconditionModules
+}
+
 #' Modules identification by recursive community detection
 #' 
 #' Modules detection using igraph's community detection algorithms, when the
