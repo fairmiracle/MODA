@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fairmiracle/MODA.svg?branch=master)](https://travis-ci.org/fairmiracle/MODA)
+[![platform](http://www.bioconductor.org/shields/availability/devel/MODA.svg)](https://www.bioconductor.org/packages/devel/bioc/html/MODA.html#archives) [![Build Status](http://www.bioconductor.org/shields/build/devel/bioc/MODA.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/MODA/) [![Linux/Mac Travis Build Status](https://travis-ci.org/fairmiracle/MODA.svg?branch=master)](https://travis-ci.org/fairmiracle/MODA)
 
 Bioconductor page http://bioconductor.org/packages/MODA
 
