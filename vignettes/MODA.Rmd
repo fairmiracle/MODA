@@ -1,7 +1,7 @@
 ---
 title: "Usage of MODA"
 author: "Dong Li dxl466@cs.bham.ac.uk"
-date: "11 November 2016"
+date: "30 January 2017"
 output: BiocStyle::html_document
 bibliography: Bibliography.bib
 vignette: >
@@ -44,10 +44,10 @@ indicator2 = 'Y'      # indicator for data profile 2
 specificTheta = 0.1 #threshold to define condition specific modules
 conservedTheta = 0.1#threshold to define conserved modules
 ##modules detection for network 1
-intModules1 <- WeightedModulePartitionDensity(datExpr1,ResultFolder,
+intModules1 <- WeightedModulePartitionHierarchical(datExpr1,ResultFolder,
                                 indicator1,CuttingCriterion)
 ##modules detection for network 2
-intModules2 <- WeightedModulePartitionDensity(datExpr2,ResultFolder,
+intModules2 <- WeightedModulePartitionHierarchical(datExpr2,ResultFolder,
                                 indicator2,CuttingCriterion)
 ```
 
@@ -67,14 +67,50 @@ The selection of optimal cutting height for each expression profile would be sto
 ![Maximal partition density based hierarchical clustering for gene expression profile 1.](ForSynthetic/Partitions_X.png)
 
 At the same time, each module for each expression profile would be stored as plain text file, with the name indicator from $indicator1$ and $indicator2$. Each secondary directory under $ResultFolder$ has the same name of condition name, e.g $indicator2$, used to store differential analysis results.
+
 ## Community detection
+Hierarchical clustering simply categorizes "similar" genes together but ignore the possible community structure of the networks, various community detection methods can be applied. The following example shows how to use Louvain algorithm [@blondel2008fast], which is based on modularity maximization:
+```{r}
+data(synthetic)
+ResultFolder <- 'ForSyntheticLouvain' # where middle files are stored
+indicator <- 'X'     # indicator for data profile 1
+GeneNames <- colnames(datExpr1)
+intModules <- WeightedModulePartitionLouvain(datExpr1,ResultFolder,indicator,GeneNames)
+```
+
+Spectral clustering is also a promising technique, which has been applied in community detection [@white2005spectral]. The following example shows how to use spectral clustering
+```{r}
+data(synthetic)
+ResultFolder <- 'ForSyntheticSpectral' # where middle files are stored
+indicator <- 'X'     # indicator for data profile 1
+GeneNames <- colnames(datExpr1)
+WeightedModulePartitionSpectral(datExpr1,ResultFolder,indicator,
+GeneNames,k=5) # k is the number of clusters
+```
 
 ## Opitmization based approach
+Unlike the clustering or community detection which covers all genes, opitmization based approach aims to select the "optimal" subset. MODA uses another package AMOUNTAIN [@li2016amountain] to identify most signigicant module in terms of module weight each time, and extract one by one to identify multiple modules.
+```{r}
+data(synthetic)
+ResultFolder <- 'ForSyntheticAmoutain' # where middle files are stored
+GeneNames <- colnames(datExpr1)
+WeightedModulePartitionAmoutain(datExpr1,Nmodule=5,ResultFolder,'X',
+GeneNames,maxsize=100,minsize=50) #Nmodule is the number of clusters
+```
+
+All the above three different methods have similar parameters and produce similar results like the  Hierarchical clustering does.
 
 # Networks comparison
 After the module detection for background network and all condition-specific networks, we can compare them using following function
 
 ```{r}
+ResultFolder = 'ForSynthetic' # where middle files are stored
+CuttingCriterion = 'Density' # could be Density or Modularity
+indicator1 = 'X'     # indicator for data profile 1
+indicator2 = 'Y'      # indicator for data profile 2
+specificTheta = 0.1 #threshold to define condition specific modules
+conservedTheta = 0.1#threshold to define conserved modules
+
 CompareAllNets(ResultFolder,intModules1,indicator1,intModules2,
                indicator2,specificTheta,conservedTheta)
 ```
