@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/fairmiracle/MODA.svg?branch=master)](https://travis-ci.org/fairmiracle/MODA)
+
 Bioconductor page http://bioconductor.org/packages/MODA
 
 # Installation
