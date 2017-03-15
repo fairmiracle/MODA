@@ -261,10 +261,10 @@ make.affinity <- function(S, n.neighboors=3) {
 #' @param ResultFolder folder used to save modules
 #' @return Number of partitions
 #' 
-getPartition <- function(ResultFolder){
-    mymodule <- rep(0,500)
+getPartition <- function(ResultFolder, n, indicator){
+    mymodule <- rep(0,n)
     ResultFiles <- list.files(ResultFolder)
-    ResultFiles <- ResultFiles[grepl('.txt',ResultFiles)]
+    ResultFiles <- ResultFiles[grepl(paste('ID_',indicator,sep=''),ResultFiles)]
     for (i in 1:length(ResultFiles)){
         ap <- as.numeric(readLines(paste(ResultFolder,'/',ResultFiles[i],sep='')))
         mymodule[ap] <- i
