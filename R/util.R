@@ -324,5 +324,38 @@ HitGenes <- function(degenelist,interesFolder){
     return (hitfrequency)
 }
 
-# when you have 50k genes, requring package Matrix
-# from http://stackoverflow.com/questions/5888287/running-cor-or-any-variant-over-a-sparse-matrix-in-r
+# make a positive definite matrix n*n
+Posdef <- function (n, ev = runif(n, 0, 1)){
+    Z <- matrix(ncol=n, rnorm(n^2))
+    decomp <- qr(Z) 
+    Q <- qr.Q(decomp) 
+    R <- qr.R(decomp) 
+    d <- diag(R) 
+    ph <- d / abs(d) 
+    O <- Q %*% diag(ph) 
+    Z <- t(O) %*% diag(ev) %*% O 
+    return(Z) 
+}
+
+# Given matrix C, return a matrix A such that cor(A)=C
+# The desired correlation matrix can be constructed by the following way
+DesireMatrix <- function(m,n,C){
+    # C <- matrix(0,nrow=n,ncol=n)
+    # groupnum <- 5
+    # stepnum <- n/groupnum
+    # for (i in 1:groupnum) {
+    #     #s=matrix(rnorm(100*100,mean=0.5),nrow=100)
+    #     #s[lower.tri(s)] = t(s)[lower.tri(s)]
+    #     s <- Posdef(stepnum)
+    #     s <- s-min(s)
+    #     s <- s+(1-max(s))
+    #     diag(s) <- 1
+    #     C[((i-1)*stepnum+1):(i*stepnum),((i-1)*stepnum+1):(i*stepnum)] <- s
+    # }
+    L1 <- chol(C)
+    
+    A <- matrix(runif(m*n),nrow=m)
+    X1 <- A%*%L1
+    colnames(X1) <- paste('G',1:n,sep='')
+    return (X1)
+}
