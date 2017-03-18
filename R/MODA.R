@@ -731,7 +731,11 @@ ModuleFrequency <- function(ResultFolder,intModules, conditionNames,
 #' @examples
 #' data(synthetic)
 #' ## plot the heatmap of the correlation matrix ...
-#' \dontrun{heatmap(cor(as.matrix(datExpr1)))}
+#' \dontrun{library(lattice)}
+#' \dontrun{pp <- cor(datExpr1)}
+#' \dontrun{colnames(pp)=NULL}
+#' \dontrun{rownames(pp)=NULL}
+#' \dontrun{levelplot(pp,main='correlation matrix',xlab='gene id',ylab='gene id')}
 NULL
 
 #' datExpr2
